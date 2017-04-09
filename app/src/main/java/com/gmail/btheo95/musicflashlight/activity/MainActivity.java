@@ -47,12 +47,13 @@ import com.gmail.btheo95.musicflashlight.util.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
-    //    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFirebaseAnalytics;
     private static final String TAG = MainActivity.class.getName();
 
     private static final int PERMISSIONS_REQUEST_CODE = 0;
@@ -60,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private static final String STATE_FRAGMENT = "state_fragment";
     private static final String STATE_SERVICE_BOUND = "state_service_bound";
     private static final String STATE_SERVICE_INTENT = "state_service_intent";
-    public static final String INTENT_FILTER = "com.gmail.btheo95.musicflashlight.activity.MainActivity.intent_filter";
 
+    public static final String INTENT_FILTER = "com.gmail.btheo95.musicflashlight.activity.MainActivity.intent_filter";
     public static final String INTENT_FILTER_MESSAGE_KEY = "message";
     public static final String INTENT_FILTER_MESSAGE_NO_CAMERA = "message_no_camera";
     public static final String INTENT_FILTER_MESSAGE_NO_FLASH = "message_no_flash";
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         initialiseBroadcastReceiver();
         initialiseViews();
@@ -102,10 +103,10 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
 
         mAdRequest = new AdRequest.Builder()
-                .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
-                .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
-                .addTestDevice("B0E733267B278B1A17AFEF83AD4D0984") // man
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
+//                .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
+//                .addTestDevice("B0E733267B278B1A17AFEF83AD4D0984") // man
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
 
         mAdView.setAlpha(0f);
@@ -238,11 +239,11 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         if (serviceWasBound && mFlashIsOn && Utils.isMyServiceRunning(FlashlightIntentService.class, getApplicationContext())) {
             FlashlightIntentService.bind(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
-            updateFabState();
         } else {
             mFlashIsOn = false;
             mFlashServiceIsBound = false;
         }
+        updateFabState();
         updateFragmentState();
     }
 
@@ -254,7 +255,12 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (mAdView != null) {
             mAdView.resume();
         }
-//        startResources();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startResources();
     }
 
     @Override
@@ -264,11 +270,15 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (mAdView != null) {
             mAdView.pause();
         }
+        super.onPause();
+    }
 
+    @Override
+    protected void onStop() {
         if (!mFlashIsOn && !isChangingConfigurations()) {
             Strobe.getInstance().stop();
         }
-        super.onPause();
+        super.onStop();
     }
 
     @Override
@@ -425,7 +435,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (mFlashIsOn) {
             mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.primary)));
             changeFabIcon();
-        } else if (mCurrentFragmentId != -1) {
+        }
+        if (mCurrentFragmentId != -1) {
             mFab.hide();
         }
     }
