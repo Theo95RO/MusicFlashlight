@@ -4,14 +4,25 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <!--<color name="primary">#FFEB3B</color>-->
-    <color name="primary">#FFF</color>
-    <color name="primary_dark">#FBC02D</color>
-    <color name="primary_light">#FFF9C4</color>
-    <color name="accent">#000</color>
-    <!--<color name="accent">#FF5252</color>-->
+    <color name="primary">#384854</color>
+    <!--<color name="primary">#607D8B</color>-->
+    <color name="primary_dark">#222c33</color>
+    <!--<color name="primary_dark">#455A64</color>-->
+    <color name="primary_light">#CFD8DC</color>
+    <color name="accent">#3dd33f</color>
+    <!--<color name="accent">#4CAF50</color>-->
+
+
+    <!--<color name="primary">#ffffff</color>-->
+    <!--<color name="primary_dark">#e6e6e6</color>-->
+    <!--<color name="primary_light">#CFD8DC</color>-->
+    <!--<color name="accent">#fff</color>-->
+
+
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
-    <color name="icons">#212121</color>
+    <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
+
+    <color name="black">#000000</color>
 </resources>

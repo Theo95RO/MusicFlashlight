@@ -1,3 +1,52 @@
 <resources>
     <string name="app_name">Music Flashlight</string>
+
+    <!--Strings related to permissions rationale dialog-->
+    <string name="permissions_dialog_title">Permissions Required</string>
+    <string name="permissions_dialog_message">
+        Camera permission is used by the app so it can toggle the flashlight.
+        Record audio permission is needed so the flashlight can toggle by the rhythm of the music.
+    </string>
+    <string name="permissions_dialog_positive">OK</string>
+    <string name="permissions_dialog_negative">Cancel</string>
+
+    <!--Strings related to license dialog-->
+    <string name="license_dialog_title">Open Source Licenses</string>
+    <string name="license_dialog_positive">OK</string>
+
+    <!--Strings related to menu-->
+    <string name="menu_main_license">License</string>
+    <string name="menu_main_about">About</string>
+
+    <!--Strings related to about fragment-->
+    <string name="fragment_about_description">%1$s is a simplistic app that automatically toggles the flashlight on and off according to the music you are listening to.</string>
+    <string name="fragment_about_version">Version&#58; %1$s</string>
+    <string name="fragment_about_connect_with_us_section">Connect with us</string>
+    <string name="fragment_about_copyright_section">Copyright &amp; License</string>
+    <string name="fragment_about_copyright_name">Constantin Bogdan-Theodor %1$d</string>
+    <string name="fragment_about_copyright_name_pre_lollipop">Constantin Bogdan-Theodor &#169; %1$d</string>
+    <string name="fragment_about_read_license">Read license</string>
+
+    <!--Strings related to notifications-->
+    <string name="notification_flash_title">Flashlight is on</string>
+    <string name="notification_flash_content">Tap to open the app</string>
+
+    <!--Strings related to main fragment-->
+    <string name="fragment_main_mode">Mode</string>
+    <string name="fragment_main_mode_musical">Musical</string>
+    <string name="fragment_main_mode_strobe">Strobe</string>
+
+    <!--
+    &lt;!&ndash;Strings related to warning fragment&ndash;&gt;
+    <string name="fragment_warning_title"><B>Warning</B></string>
+    <string name="fragment_warning_subtitle">Your device flashlight is not accessible.</string>
+    <string name="fragment_warning_description">
+            Possible causes: \n
+        - another app may use your device camera \n
+        - your device may not have a flashlight \n
+        - your device may not have a camera :-)
+    </string>
+-->
+
+
 </resources>

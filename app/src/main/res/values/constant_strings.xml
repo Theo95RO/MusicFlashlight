@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--suppress MissingTranslation -->
+    <string name="version_number">1.1</string>
+    <!--suppress MissingTranslation -->
+    <string name="email_feedback">musicflashlightfeedback@gmail.com</string>
+    <!--suppress MissingTranslation -->
+    <string name="play_store_id">com.gmail.btheo95.musicflashlight</string>
+
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lanternă Muzicală</string>
+
+    <!--Strings related to permissions rationale dialog-->
+    <string name="permissions_dialog_title">Permisie Necesară</string>
+    <string name="permissions_dialog_message">
+        Permisia pentru cameră este folosită de aplicație pentru a aprinde lanterna.
+        Permisia de înregistrare a sunetului este necesară pentru a apride lanterna în funcție de ritmul muzicii.
+    </string>
+    <string name="permissions_dialog_positive">OK</string>
+    <string name="permissions_dialog_negative">Anulare</string>
+
+    <!--Strings related to license dialog-->
+    <string name="license_dialog_title">Licențe cu sursă deschisă</string>
+    <string name="license_dialog_positive">OK</string>
+
+    <!--Strings related to menu-->
+    <string name="menu_main_license">Licențe</string>
+    <string name="menu_main_about">Despre</string>
+
+    <!--Strings related to about fragment-->
+    <string name="fragment_about_description">%1$s este o aplicație simplistă care aprinde și stinge automat lanterna telefonului in funcție de ritmul muzicii pe care o ascultați.</string>
+    <string name="fragment_about_version">Versiune&#58; %1$s</string>
+    <string name="fragment_about_connect_with_us_section">Conectați-vă cu noi</string>
+    <string name="fragment_about_copyright_section">Drepturi de autor &amp; Licență</string>
+    <string name="fragment_about_copyright_name">Constantin Bogdan-Theodor %1$d</string>
+    <string name="fragment_about_copyright_name_pre_lollipop">Constantin Bogdan-Theodor &#169; %1$d</string>
+    <string name="fragment_about_read_license">Citiți licența</string>
+
+    <!--Strings related to notifications-->
+    <string name="notification_flash_title">Lanterna este pornită</string>
+    <string name="notification_flash_content">Atingeți pentru a deschide aplicația</string>
+
+    <!--Strings related to main fragment-->
+    <string name="fragment_main_mode">Mod</string>
+    <string name="fragment_main_mode_musical">Muzical</string>
+    <string name="fragment_main_mode_strobe">Stroboscop</string>
+
+</resources>
