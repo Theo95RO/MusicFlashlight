@@ -1,5 +1,10 @@
 package com.gmail.btheo95.musicflashlight.resource;
 
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+
 import java.io.IOException;
 
 /**
@@ -21,7 +26,7 @@ public final class Strobe {
         return strobe;
     }
 
-    public synchronized void start() throws IOException {
+    public synchronized void start() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         if (mIsStarted) {
             return;
         }
@@ -39,7 +44,7 @@ public final class Strobe {
         mIsStarted = false;
     }
 
-    private void startSoundMeter() throws IOException {
+    private void startSoundMeter() throws IOException, MicNotReachebleException {
         mSoundMeter = new SoundMeter();
         mSoundMeter.start();
     }
@@ -51,7 +56,7 @@ public final class Strobe {
         mSoundMeter.stop();
     }
 
-    private void startCamera() throws IOException {
+    private void startCamera() throws IOException, CameraNotReachebleException, FlashNotReachebleException {
         mCamera = new FlashCamera();
         mCamera.startCamera();
     }
@@ -63,17 +68,17 @@ public final class Strobe {
         mCamera.stopCamera();
     }
 
-    public synchronized void toggleFlash() {
+    public synchronized void toggleFlash() throws FlashAlreadyInUseException {
         mCamera.toggleFlash();
         mFlashIsOn = mCamera.isFlashOn();
     }
 
-    public synchronized void turnFlashOn() {
+    public synchronized void turnFlashOn() throws FlashAlreadyInUseException {
         mCamera.turnFlashOn();
         mFlashIsOn = true;
     }
 
-    public synchronized void turnFlashOff() {
+    public synchronized void turnFlashOff() throws FlashAlreadyInUseException {
         mCamera.turnFlashOff();
         mFlashIsOn = false;
     }

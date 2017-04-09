@@ -2,6 +2,8 @@ package com.gmail.btheo95.musicflashlight.resource;
 
 import android.media.MediaRecorder;
 
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+
 import java.io.IOException;
 
 /**
@@ -11,9 +13,8 @@ import java.io.IOException;
 public class SoundMeter {
 
     private MediaRecorder mRecorder = null;
-//    private boolean mIsStarted = false;
 
-    public void start() throws IOException {
+    public void start() throws IOException, MicNotReachebleException {
         if (mRecorder == null) {
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -21,19 +22,19 @@ public class SoundMeter {
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mRecorder.setOutputFile("/dev/null");
             mRecorder.prepare();
-            mRecorder.start();
-//            mIsStarted = true;
+            try {
+                mRecorder.start();
+            } catch (RuntimeException ex) {
+                throw new MicNotReachebleException();
+            }
         }
     }
 
     public void stop() {
-        if (mRecorder != null
-//                && mIsStarted
-                ) {
+        if (mRecorder != null) {
             mRecorder.stop();
             mRecorder.release();
             mRecorder = null;
-//            mIsStarted = false;
         }
     }
 

@@ -1,5 +1,9 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 
 import java.io.IOException;
@@ -8,7 +12,7 @@ import java.io.IOException;
  * Created by btheo on 3/28/2017.
  */
 
-public abstract class StrobeRunnable implements Runnable {
+public abstract class StrobeRunnable {
 
 
     protected boolean mFlashIsOn = false;
@@ -21,8 +25,9 @@ public abstract class StrobeRunnable implements Runnable {
         mStrobe = Strobe.getInstance();
     }
 
+    public abstract void run() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException;
 
-    protected void startResources() throws IOException {
+    protected void startResources() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         mStrobe.start();
     }
 
@@ -31,7 +36,7 @@ public abstract class StrobeRunnable implements Runnable {
         notifyListener();
     }
 
-    protected void startResourcesIfNotStarted() throws IOException {
+    protected void startResourcesIfNotStarted() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         if (!mStrobe.isStarted()) {
             startResources();
         }
@@ -47,17 +52,17 @@ public abstract class StrobeRunnable implements Runnable {
         mIsRunnableShutdown = true;
     }
 
-    protected void toggleFlash() {
+    protected void toggleFlash() throws FlashAlreadyInUseException {
         mStrobe.toggleFlash();
         mFlashIsOn = mStrobe.isFlashOn();
     }
 
-    protected void turnFlashOn() {
+    protected void turnFlashOn() throws FlashAlreadyInUseException {
         mStrobe.turnFlashOn();
         mFlashIsOn = true;
     }
 
-    protected void turnFlashOff() {
+    protected void turnFlashOff() throws FlashAlreadyInUseException {
         mStrobe.turnFlashOff();
         mFlashIsOn = false;
     }

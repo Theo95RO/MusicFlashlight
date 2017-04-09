@@ -36,6 +36,13 @@
     <string name="fragment_main_mode_musical">Musical</string>
     <string name="fragment_main_mode_strobe">Strobe</string>
 
+    <!--Strings related to Toasts-->
+    <string name="toast_no_camera">Device camera is not reacheble</string>
+    <string name="toast_no_flashlight">Device flashlight is not reacheble</string>
+    <string name="toast_camera_already_in_use">Another app is using the camera</string>
+    <string name="toast_error">An error has occurred</string>
+    <string name="toast_no_microphone">Device microphone not reacheble</string>
+
     <!--
     &lt;!&ndash;Strings related to warning fragment&ndash;&gt;
     <string name="fragment_warning_title"><B>Warning</B></string>

@@ -5,9 +5,12 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -17,6 +20,7 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,8 +31,12 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.gmail.btheo95.musicflashlight.R;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
 import com.gmail.btheo95.musicflashlight.fragment.AboutFragment;
 import com.gmail.btheo95.musicflashlight.fragment.LicenseDialogFragment;
 import com.gmail.btheo95.musicflashlight.fragment.MainContentFragment;
@@ -39,24 +47,26 @@ import com.gmail.btheo95.musicflashlight.util.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
+    //    private FirebaseAnalytics mFirebaseAnalytics;
     private static final String TAG = MainActivity.class.getName();
+
     private static final int PERMISSIONS_REQUEST_CODE = 0;
     private static final String STATE_FLASH = "state_flash";
     private static final String STATE_FRAGMENT = "state_fragment";
     private static final String STATE_SERVICE_BOUND = "state_service_bound";
     private static final String STATE_SERVICE_INTENT = "state_service_intent";
+    public static final String INTENT_FILTER = "com.gmail.btheo95.musicflashlight.activity.MainActivity.intent_filter";
 
-//    private static final String STATE_SHOULD_LOAD_AD = "state_should_load_ad";
-//    private static final String STATE_FLASH_AVAILABILITY = "state_flash_availability";
-//    private static final String STATE_MUSIC_STROBE_THRESHOLD = "state_music_strobe_threshold";
+    public static final String INTENT_FILTER_MESSAGE_KEY = "message";
+    public static final String INTENT_FILTER_MESSAGE_NO_CAMERA = "message_no_camera";
+    public static final String INTENT_FILTER_MESSAGE_NO_FLASH = "message_no_flash";
+    public static final String INTENT_FILTER_MESSAGE_CAMERA_IN_USE = "message_camera_in_use";
+    public static final String INTENT_FILTER_MESSAGE_NO_MIC = "message_no_mic";
 
     private FloatingActionButton mFab;
     private AdRequest mAdRequest;
@@ -70,34 +80,20 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private int mCurrentFragmentId = -1;
     private MainContentFragment mMainContentFragment;
 
-//    private boolean mShouldLoadAdd = false;
-//    private boolean mFlashAvailabilityWasChecked = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-//        mFlashIsReachable = (FlashCamera.deviceHasCamera() && FlashCamera.deviceHasFlashlight());
+
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        initialiseBroadcastReceiver();
         initialiseViews();
-//        startResources();
+        startResources();
+
         mMainContentFragment = (MainContentFragment)
                 getFragmentManager().findFragmentById(R.id.main_fragment);
     }
-
-    private void startResources() {
-        if (Permissions.arePermissionsGranted(this)) {
-            try {
-                Strobe.getInstance().start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-//            mAdView.setVisibility(View.GONE);
-//            mFab.setEnabled(false);
-//    setFragment(R.id.content_fragment_container, WarningFragment.newInstance(), null, null);
 
     private void initialiseViews() {
 
@@ -148,6 +144,78 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         changeFabIcon();
     }
 
+    private void initialiseBroadcastReceiver() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
+                new IntentFilter(INTENT_FILTER));
+    }
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra(INTENT_FILTER_MESSAGE_KEY);
+
+            switch (message) {
+                case INTENT_FILTER_MESSAGE_NO_CAMERA:
+                    handleNoCameraException();
+                    break;
+                case INTENT_FILTER_MESSAGE_CAMERA_IN_USE:
+                    handleCameraInUseException();
+                    break;
+                case INTENT_FILTER_MESSAGE_NO_FLASH:
+                    handleNoFlashException();
+                    break;
+                case INTENT_FILTER_MESSAGE_NO_MIC:
+                    handleNoMicException();
+                default:
+                    break;
+            }
+        }
+    };
+
+    private void handleNoMicException() {
+        handleException(getString(R.string.toast_no_microphone));
+    }
+
+    private void handleCameraInUseException() {
+        handleException(getString(R.string.toast_camera_already_in_use));
+    }
+
+    private void handleNoCameraException() {
+        handleException(getString(R.string.toast_no_camera));
+    }
+
+    private void handleNoFlashException() {
+        handleException(getString(R.string.toast_no_flashlight));
+    }
+
+    private void handleCameraException() {
+        handleException(getString(R.string.toast_error));
+    }
+
+    private void handleException(String message) {
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
+        if (mFlashIsOn) {
+            fabAction(false);
+        }
+    }
+
+    private void startResources() {
+        if (Permissions.arePermissionsGranted(this)) {
+            try {
+                Strobe.getInstance().start();
+            } catch (IOException e) {
+                handleCameraException();
+            } catch (FlashNotReachebleException e) {
+                handleNoFlashException();
+            } catch (CameraNotReachebleException e) {
+                handleNoCameraException();
+            } catch (MicNotReachebleException e) {
+                handleNoMicException();
+            }
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "onSaveInstanceState()");
@@ -155,8 +223,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         outState.putInt(STATE_FRAGMENT, mCurrentFragmentId);
         outState.putBoolean(STATE_SERVICE_BOUND, mFlashServiceIsBound);
         outState.putParcelable(STATE_SERVICE_INTENT, mFlashlightServiceIntent);
-//        outState.putBoolean(STATE_SHOULD_LOAD_AD, mShouldLoadAdd);
-//        outState.putBoolean(STATE_FLASH_AVAILABILITY, mFlashAvailabilityWasChecked);
         super.onSaveInstanceState(outState);
     }
 
@@ -177,11 +243,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             mFlashIsOn = false;
             mFlashServiceIsBound = false;
         }
-
-//        mShouldLoadAdd = savedInstanceState.getBoolean(STATE_SHOULD_LOAD_AD);
-//        mFlashAvailabilityWasChecked = savedInstanceState.getBoolean(STATE_FLASH_AVAILABILITY);
-
-//        updateAdState();
         updateFragmentState();
     }
 
@@ -191,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         Log.d(TAG, "onResume()");
 
         if (mAdView != null) {
-                mAdView.resume();
+            mAdView.resume();
         }
 //        startResources();
     }
@@ -222,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             FlashlightIntentService.unbind(getApplicationContext(), mServiceConnection);
         }
 
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
     }
 
@@ -296,12 +358,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     };
 
     private void loadAd() {
-//        if (!mShouldLoadAdd) {
-//            return;
-//        }
-//        mAdView.setAlpha(1f);
-//        mAdView.setScaleX(1f);
-//        mAdView.setScaleY(1f);
         mAdView.loadAd(mAdRequest);
         mAdView.setVisibility(View.VISIBLE);
     }
@@ -345,17 +401,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
         animateFab();
         changeFabIcon();
-//        if(!mFlashAvailabilityWasChecked){
-//            if (!FlashCamera.deviceFlashIsReachenle()) {
-//                displayFlashNotReacheble();
-//                return;
-//            }
-//            mFlashAvailabilityWasChecked = true;
-//        }
-//        if (!mShouldLoadAdd) {
-//            mShouldLoadAdd = true;
-//            loadAd();
-//        }
 
         if (!mFlashIsOn) {
             stopFlashlight();
@@ -368,21 +413,13 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         int checkedRadioId = getCheckedRadioId();
         mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedRadioId);
         FlashlightIntentService.bindAndStart(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
-
-//            mFlashService = FlashlightIntentService.startActionMusicFlashlight(getApplicationContext());
-//            startHeadlessFragment(stateLoss);
     }
 
     private void stopFlashlight() {
         mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, false);
         mFlashServiceIsBound = false;
-//            stopHeadlessFragment();
 
     }
-
-//    private void updateAdState(){
-//        loadAd();
-//    }
 
     private void updateFabState() {
         if (mFlashIsOn) {
@@ -438,34 +475,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         animator.start();
     }
 
-//    private void startHeadlessFragment(boolean stateLoss) {
-//        HeadlessFragment headlessFragment =
-//                (HeadlessFragment) getFragmentManager()
-//                        .findFragmentById(R.id.headless_fragment_container);
-//
-//        if (headlessFragment == null) {
-//            headlessFragment = new HeadlessFragment();
-//            if (stateLoss) {
-//                getFragmentManager().beginTransaction()
-//                        .add(R.id.headless_fragment_container, headlessFragment).commitAllowingStateLoss();
-//            } else {
-//                getFragmentManager().beginTransaction()
-//                        .add(R.id.headless_fragment_container, headlessFragment).commit();
-//            }
-//        }
-//    }
-//
-//    private void stopHeadlessFragment() {
-//        getSupportFragmentManager().executePendingTransactions();
-//        Fragment fragmentById = getFragmentManager().
-//                findFragmentById(R.id.headless_fragment_container);
-//
-//        if (fragmentById != null) {
-//            getFragmentManager().beginTransaction()
-//                    .remove(fragmentById).commit();
-//        }
-//    }
-
     private void showPermissionsRationale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -491,12 +500,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         AlertDialog alert = builder.create();
         alert.show();
     }
-
-//    private void displayFlashNotReacheble() {
-//        mAdView.setVisibility(View.GONE);
-//        mFab.setEnabled(false);
-//        setFragment(R.id.content_fragment_container, WarningFragment.newInstance(), R.animator.fade_in_start, R.animator.fade_out_start);
-//    }
 
     private void displayLicensesDialogFragment() {
         LicenseDialogFragment dialog = LicenseDialogFragment.newInstance();

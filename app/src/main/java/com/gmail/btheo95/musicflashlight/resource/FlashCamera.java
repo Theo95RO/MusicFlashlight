@@ -3,8 +3,12 @@ package com.gmail.btheo95.musicflashlight.resource;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by btheo on 3/16/2017.
@@ -46,15 +50,22 @@ public class FlashCamera {
         return deviceHasCamera() && deviceHasFlashlight();
     }
 
-    public void startCamera() throws IOException {
+    public void startCamera() throws IOException, CameraNotReachebleException, FlashNotReachebleException {
         mCamera = Camera.open();
+        if (mCamera == null) {
+            throw new CameraNotReachebleException();
+        }
         mDummySurfaceTexture = new SurfaceTexture(0);
         mCamera.setPreviewTexture(mDummySurfaceTexture);
         mCamera.startPreview();
 
         mParametersFlashOn = mCamera.getParameters();
         //depends on device
-        ArrayList<String> flashModesList = new ArrayList<>(mCamera.getParameters().getSupportedFlashModes());
+
+        List<String> flashModesList = mCamera.getParameters().getSupportedFlashModes();
+        if (flashModesList == null) {
+            throw new FlashNotReachebleException();
+        }
         if (flashModesList.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
             mParametersFlashOn.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
         } else if (flashModesList.contains(Camera.Parameters.FLASH_MODE_ON)) {
@@ -71,32 +82,36 @@ public class FlashCamera {
         if (null == mCamera) {
             return;
         }
-        turnFlashOff();
+        try {
+            turnFlashOff();
+        } catch (FlashAlreadyInUseException e) {
+            e.printStackTrace();
+        }
         mCamera.stopPreview();
         mCamera.release();
     }
 
-    public void turnFlashOn() {
+    public void turnFlashOn() throws FlashAlreadyInUseException {
         if (null == mCamera) {
             return;
         }
         if (!mFlashIsOn) {
-            mCamera.setParameters(mParametersFlashOn);
+            setParameters(mParametersFlashOn);
             mFlashIsOn = true;
         }
     }
 
-    public void turnFlashOff() {
+    public void turnFlashOff() throws FlashAlreadyInUseException {
         if (null == mCamera) {
             return;
         }
         if (mFlashIsOn) {
-            mCamera.setParameters(mParametersFlashOff);
+            setParameters(mParametersFlashOff);
             mFlashIsOn = false;
         }
     }
 
-    public void toggleFlash() {
+    public void toggleFlash() throws FlashAlreadyInUseException {
         if (mFlashIsOn) {
             turnFlashOff();
         } else {
@@ -106,5 +121,13 @@ public class FlashCamera {
 
     public boolean isFlashOn() {
         return mFlashIsOn;
+    }
+
+    private void setParameters(Camera.Parameters parameters) throws FlashAlreadyInUseException {
+        try {
+            mCamera.setParameters(parameters);
+        } catch (RuntimeException ex) {
+            throw new FlashAlreadyInUseException();
+        }
     }
 }

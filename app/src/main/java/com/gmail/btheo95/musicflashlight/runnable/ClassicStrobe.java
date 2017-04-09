@@ -1,5 +1,10 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -7,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by btheo on 4/6/2017.
  */
 
-public class ClassicStrobe extends StrobeRunnable{
+public class ClassicStrobe extends StrobeRunnable {
 
     private static final String TAG = ClassicStrobe.class.getSimpleName();
     private int mFrequency;
@@ -17,7 +22,7 @@ public class ClassicStrobe extends StrobeRunnable{
     }
 
     @Override
-    public void run() {
+    public void run() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         try {
             while (!mIsRunnableShutdown) {
                 startResourcesIfNotStarted();

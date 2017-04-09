@@ -2,6 +2,11 @@ package com.gmail.btheo95.musicflashlight.runnable;
 
 import android.util.Log;
 
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +37,7 @@ public final class MusicStrobe extends StrobeRunnable {
         mAverageAmplitude = initialAmplitude;
     }
 
-    @Override
-    public void run() {
+    public void run() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         Log.d(TAG, "run()");
         try {
             while (!mIsRunnableShutdown) {

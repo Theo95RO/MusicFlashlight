@@ -10,10 +10,15 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.gmail.btheo95.musicflashlight.R;
 import com.gmail.btheo95.musicflashlight.activity.MainActivity;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
 import com.gmail.btheo95.musicflashlight.runnable.ClassicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.MusicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.StrobeRunnable;
@@ -128,7 +133,9 @@ public class FlashlightIntentService extends IntentService {
     }
 
     public void stop(boolean shouldCloseResources) {
-        mStrobe.shutdown(shouldCloseResources);
+        if (mStrobe != null) {
+            mStrobe.shutdown(shouldCloseResources);
+        }
     }
 
     public void changeAction(Context context, ServiceConnection serviceConnection, Intent intent) {
@@ -138,12 +145,53 @@ public class FlashlightIntentService extends IntentService {
 
     private void handleActionMusicFlashlight() {
         mStrobe = new MusicStrobe();
-        mStrobe.run();
+        startStrobe();
     }
 
     private void handleActionStrobeFlashlight(int frequency) {
         mStrobe = new ClassicStrobe(frequency);
-        mStrobe.run();
+        startStrobe();
+    }
+
+    private void startStrobe() {
+        try {
+            mStrobe.run();
+        } catch (FlashAlreadyInUseException e) {
+            broadcastCameraAlreadyInUse();
+            mStrobe.shutdown();
+        } catch (FlashNotReachebleException e) {
+            broadcastFlashNotReacheble();
+            mStrobe.shutdown();
+        } catch (CameraNotReachebleException e) {
+            broadcastCameraNotReacheble();
+            mStrobe.shutdown();
+        } catch (MicNotReachebleException e) {
+            broadcastMicNotReacheble();
+            mStrobe.shutdown();
+        }
+    }
+
+    private void broadcastMicNotReacheble() {
+        broadcastToMainActivity(MainActivity.INTENT_FILTER_MESSAGE_NO_MIC);
+    }
+
+    private void broadcastCameraNotReacheble() {
+        broadcastToMainActivity(MainActivity.INTENT_FILTER_MESSAGE_NO_CAMERA);
+    }
+
+    private void broadcastFlashNotReacheble() {
+        broadcastToMainActivity(MainActivity.INTENT_FILTER_MESSAGE_NO_FLASH);
+    }
+
+    private void broadcastCameraAlreadyInUse() {
+        broadcastToMainActivity(MainActivity.INTENT_FILTER_MESSAGE_CAMERA_IN_USE);
+    }
+
+    private void broadcastToMainActivity(String message) {
+        Intent intent = new Intent(MainActivity.INTENT_FILTER);
+        intent.putExtra(MainActivity.INTENT_FILTER_MESSAGE_KEY, message);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
     }
 
     private void handleAction(Intent intent) {
