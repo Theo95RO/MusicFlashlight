@@ -103,10 +103,10 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
 
         mAdRequest = new AdRequest.Builder()
-//                .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
-//                .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
-//                .addTestDevice("B0E733267B278B1A17AFEF83AD4D0984") // man
-//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
+                .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
+                .addTestDevice("B0E733267B278B1A17AFEF83AD4D0984") // man
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
 
         mAdView.setAlpha(0f);
