@@ -1,8 +1,6 @@
 package com.gmail.btheo95.musicflashlight.activity;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
+import android.app.ActivityManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
@@ -13,11 +11,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -28,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            initialiseRecentView();
+        }
         initialiseBroadcastReceiver();
         initialiseViews();
         startResources();
@@ -96,12 +99,26 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 getFragmentManager().findFragmentById(R.id.main_fragment);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void initialiseRecentView() {
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_teal);
+        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(this, R.color.primary_dark));
+        setTaskDescription(taskDesc);
+    }
+
     private void initialiseViews() {
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                fabAction(true);
+            }
+        });
+        changeFabIcon();
+
         mAdView = (AdView) findViewById(R.id.ad_view);
-
-
         mAdRequest = new AdRequest.Builder()
                 .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
                 .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
@@ -133,16 +150,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             }
         });
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                fabAction(true);
-            }
-        });
-
         loadAd();
-        changeFabIcon();
     }
 
     private void initialiseBroadcastReceiver() {
@@ -413,7 +421,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (shouldVibrate) {
             vibrateFab();
         }
-        animateFab();
+
+//        animateFab();
         changeFabIcon();
 
         if (!mFlashIsOn) {
@@ -437,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     private void updateFabState() {
         if (mFlashIsOn) {
-            mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.primary)));
+//            mFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.primary)));
             changeFabIcon();
         }
         if (mCurrentFragmentId != -1) {
@@ -465,30 +474,30 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         vibrator.vibrate(25);
     }
 
-    private void animateFab() {
-        int initialColor;
-        int finalColor;
-        if (!mFlashIsOn) {
-            initialColor = ContextCompat.getColor(MainActivity.this, R.color.primary);
-            finalColor = ContextCompat.getColor(MainActivity.this, R.color.accent);
-        } else {
-            initialColor = ContextCompat.getColor(MainActivity.this, R.color.accent);
-            finalColor = ContextCompat.getColor(MainActivity.this, R.color.primary);
-        }
-
-        //could try ObjectAnimator
-        final ValueAnimator animator = ObjectAnimator.ofInt(initialColor, finalColor);
-        animator.setEvaluator(new ArgbEvaluator());
-        animator.setInterpolator(new DecelerateInterpolator(1));
-        animator.addUpdateListener(new ObjectAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int animatedValue = (int) animation.getAnimatedValue();
-                mFab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
-            }
-        });
-        animator.start();
-    }
+//    private void animateFab() {
+//        int initialColor;
+//        int finalColor;
+//        if (!mFlashIsOn) {
+//            initialColor = ContextCompat.getColor(MainActivity.this, R.color.primary);
+//            finalColor = ContextCompat.getColor(MainActivity.this, R.color.accent);
+//        } else {
+//            initialColor = ContextCompat.getColor(MainActivity.this, R.color.accent);
+//            finalColor = ContextCompat.getColor(MainActivity.this, R.color.primary);
+//        }
+//
+//        //could try ObjectAnimator
+//        final ValueAnimator animator = ObjectAnimator.ofInt(initialColor, finalColor);
+//        animator.setEvaluator(new ArgbEvaluator());
+//        animator.setInterpolator(new DecelerateInterpolator(1));
+//        animator.addUpdateListener(new ObjectAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                int animatedValue = (int) animation.getAnimatedValue();
+//                mFab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
+//            }
+//        });
+//        animator.start();
+//    }
 
     private void showPermissionsRationale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

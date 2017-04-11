@@ -32,6 +32,7 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/ic_flash_on_white_24dp"
+        app:backgroundTint="@color/primary"
         app:elevation="4dp"
         app:fabSize="normal" />
 

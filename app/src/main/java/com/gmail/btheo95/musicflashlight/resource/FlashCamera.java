@@ -51,7 +51,11 @@ public class FlashCamera {
     }
 
     public void startCamera() throws IOException, CameraNotReachebleException, FlashNotReachebleException {
-        mCamera = Camera.open();
+        try {
+            mCamera = Camera.open();
+        } catch (RuntimeException ex) {
+            throw new CameraNotReachebleException();
+        }
         if (mCamera == null) {
             throw new CameraNotReachebleException();
         }
