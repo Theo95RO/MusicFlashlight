@@ -289,7 +289,11 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             mAdView.destroy();
         }
 
-        if (mFlashServiceIsBound) {
+        if (mFlashServiceIsBound && !isChangingConfigurations()) {
+            //when users closes the app from recents and the flash is on
+            mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, true);
+        }
+        if (mFlashServiceIsBound && isChangingConfigurations()) {
             FlashlightIntentService.unbind(getApplicationContext(), mServiceConnection);
         }
 

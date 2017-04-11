@@ -136,6 +136,7 @@ public class FlashlightIntentService extends IntentService {
         if (mStrobe != null) {
             mStrobe.shutdown(shouldCloseResources);
         }
+        stopSelf();
     }
 
     public void changeAction(Context context, ServiceConnection serviceConnection, Intent intent) {
