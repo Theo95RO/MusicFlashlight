@@ -67,7 +67,7 @@ public abstract class StrobeRunnable {
         mFlashIsOn = false;
     }
 
-    protected double getMicrophoneAmplitude() {
+    protected int getMicrophoneAmplitude() {
         return mStrobe.getMicrophoneAmplitude();
     }
 

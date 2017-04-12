@@ -18,13 +18,14 @@ public final class MusicStrobe extends StrobeRunnable {
 
     private static final String TAG = MusicStrobe.class.getSimpleName();
 
-    private static final double AMPLITUDE_CORRECTION_COEFFICIENT = 0.15;
+    private static final float AMPLITUDE_CORRECTION_COEFFICIENT = 0.15f;
     //    private static final double AMPLITUDE_CORRECTION_COEFFICIENT = 0.10;
-    private static final double THRESHOLD_COEFFICIENT = 1.25;
+    private static final float THRESHOLD_COEFFICIENT = 1.25f;
     private static final int THREAD_WAITING_TIME = 50;
+    private static final int MAX_AVERAGE_AMPLITUDE = (int) (32767 - (THRESHOLD_COEFFICIENT -1 ) * 32767); // related to THRESHOLD_COEFFICIENT
 //    private static final int THREAD_WAITING_TIME = 25;
 
-    private double mAverageAmplitude;
+    private int mAverageAmplitude;
     private boolean mAutoThreshold;
 
     public MusicStrobe() {
@@ -32,7 +33,7 @@ public final class MusicStrobe extends StrobeRunnable {
         mAverageAmplitude = 100;
     }
 
-    public MusicStrobe(boolean autoThreshold, double initialAmplitude) {
+    public MusicStrobe(boolean autoThreshold, int initialAmplitude) {
         mAutoThreshold = autoThreshold;
         mAverageAmplitude = initialAmplitude;
     }
@@ -42,7 +43,7 @@ public final class MusicStrobe extends StrobeRunnable {
         try {
             while (!mIsRunnableShutdown) {
                 startResourcesIfNotStarted();
-                double currentAmplitude = getMicrophoneAmplitude();
+                int currentAmplitude = getMicrophoneAmplitude();
                 if (currentAmplitude > mAverageAmplitude * THRESHOLD_COEFFICIENT) {
                     turnFlashOn();
                 } else {
@@ -69,10 +70,13 @@ public final class MusicStrobe extends StrobeRunnable {
         }
     }
 
-    private void calculateAutoThreshold(double currentAmplitude) {
+    private void calculateAutoThreshold(int currentAmplitude) {
         mAverageAmplitude -= mAverageAmplitude * AMPLITUDE_CORRECTION_COEFFICIENT;
         mAverageAmplitude += currentAmplitude * AMPLITUDE_CORRECTION_COEFFICIENT;
 
+        if (mAverageAmplitude > MAX_AVERAGE_AMPLITUDE) {
+            mAverageAmplitude = MAX_AVERAGE_AMPLITUDE;
+        }
 //        double correction = currentAmplitude * AMPLITUDE_CORRECTION_COEFFICIENT;
 //        if (currentAmplitude > mAverageAmplitude) {
 //            mAverageAmplitude += correction;
@@ -81,11 +85,11 @@ public final class MusicStrobe extends StrobeRunnable {
 //        }
     }
 
-    public double getThreshold() {
+    public int getThreshold() {
         return mAverageAmplitude;
     }
 
-    public void setThreshold(double threshold) {
+    public void setThreshold(int threshold) {
         this.mAverageAmplitude = threshold;
     }
 

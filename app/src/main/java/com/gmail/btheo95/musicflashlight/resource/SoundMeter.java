@@ -38,7 +38,7 @@ public class SoundMeter {
         }
     }
 
-    public double getAmplitude() {
+    public int getAmplitude() {
         if (mRecorder != null)
             return mRecorder.getMaxAmplitude();
         else

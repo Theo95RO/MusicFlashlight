@@ -91,7 +91,7 @@ public final class Strobe {
         return mFlashIsOn;
     }
 
-    public synchronized double getMicrophoneAmplitude() {
+    public synchronized int getMicrophoneAmplitude() {
         return mSoundMeter.getAmplitude();
     }
 }
