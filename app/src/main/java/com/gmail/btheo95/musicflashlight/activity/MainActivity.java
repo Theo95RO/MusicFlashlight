@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -42,6 +44,7 @@ import com.gmail.btheo95.musicflashlight.fragment.LicenseDialogFragment;
 import com.gmail.btheo95.musicflashlight.fragment.MainContentFragment;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 import com.gmail.btheo95.musicflashlight.service.FlashlightIntentService;
+import com.gmail.btheo95.musicflashlight.util.Constants;
 import com.gmail.btheo95.musicflashlight.util.Permissions;
 import com.gmail.btheo95.musicflashlight.util.Utils;
 import com.google.android.gms.ads.AdListener;
@@ -283,6 +286,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onStop() {
+        if (!shouldRunInBackground() && mFlashIsOn && !isChangingConfigurations()) {
+            fabAction(false);
+        }
         if (!mFlashIsOn && !isChangingConfigurations()) {
             Strobe.getInstance().stop();
         }
@@ -405,6 +411,11 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         mAdView.destroy();
 
 //        mAdView.setVisibility(View.INVISIBLE);
+    }
+
+    private boolean shouldRunInBackground() {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        return sharedPreferences.getBoolean(Constants.PREFERENCE_RUN_IN_BACKGROUND_KEY, Constants.PREFERENCE_RUN_IN_BACKGROUND_DEFAULT);
     }
 
     private void fabAction(boolean shouldVibrate) {
@@ -602,7 +613,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
         return 0;
     }
-
 
     private int getCheckedRadioId() {
         if (mMainContentFragment != null) {

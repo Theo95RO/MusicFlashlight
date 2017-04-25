@@ -35,6 +35,7 @@
     <string name="fragment_main_mode">Mode</string>
     <string name="fragment_main_mode_musical">Musical</string>
     <string name="fragment_main_mode_strobe">Strobe</string>
+    <string name="fragment_main_switch_run_in_background_title">Run in background</string>
 
     <!--Strings related to Toasts-->
     <string name="toast_no_camera">Device camera is not reacheble</string>

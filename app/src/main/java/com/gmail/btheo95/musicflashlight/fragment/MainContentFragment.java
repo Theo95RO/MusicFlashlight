@@ -2,14 +2,19 @@ package com.gmail.btheo95.musicflashlight.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.support.v7.widget.SwitchCompat;
+import android.widget.TableLayout;
 
 import com.gmail.btheo95.musicflashlight.R;
 import com.gmail.btheo95.musicflashlight.util.Constants;
@@ -25,6 +30,8 @@ public class MainContentFragment extends Fragment {
     private Context mContext;
     private RadioGroup mRadioGroup;
     private SeekBar mStrobeSeekBar;
+    private SwitchCompat mRunInBackgroundSwitch;
+    private TableLayout mRunInBackgroundContainer;
 
     public MainContentFragment() {
     }
@@ -80,6 +87,8 @@ public class MainContentFragment extends Fragment {
     }
 
     private void initialiseViews(View mainView) {
+        initialiseRunInBackgroundSwitch(mainView);
+
         mRadioGroup = (RadioGroup) mainView.findViewById(R.id.radio_group_mode);
         mStrobeSeekBar = (SeekBar) mainView.findViewById(R.id.seek_bar_strobe);
 
@@ -124,6 +133,36 @@ public class MainContentFragment extends Fragment {
                 mListener.onRadioCheckedChanged(group, checkedId);
             }
 
+        });
+    }
+
+    private void initialiseRunInBackgroundSwitch(View mainView) {
+        mRunInBackgroundSwitch = (SwitchCompat) mainView.findViewById(R.id.switch_run_in_background);
+        mRunInBackgroundContainer = (TableLayout) mainView.findViewById(R.id.run_in_background_container);
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean switchPreference = sharedPreferences.getBoolean(Constants.PREFERENCE_RUN_IN_BACKGROUND_KEY, Constants.PREFERENCE_RUN_IN_BACKGROUND_DEFAULT);
+
+        mRunInBackgroundSwitch.setChecked(switchPreference);
+
+        mRunInBackgroundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                sharedPreferences.edit()
+                        .putBoolean(Constants.PREFERENCE_RUN_IN_BACKGROUND_KEY, b)
+                        .apply();
+            }
+        });
+
+        mRunInBackgroundContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mRunInBackgroundSwitch.isChecked()) {
+                    mRunInBackgroundSwitch.setChecked(false);
+                } else {
+                    mRunInBackgroundSwitch.setChecked(true);
+                }
+            }
         });
     }
 

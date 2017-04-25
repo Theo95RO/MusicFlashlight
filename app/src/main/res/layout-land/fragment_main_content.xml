@@ -19,7 +19,7 @@
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:divider="?attr/dividerVertical"
             android:orientation="vertical"
-            android:paddingBottom="144dp"
+            android:paddingBottom="64dp"
             android:showDividers="middle">
 
 

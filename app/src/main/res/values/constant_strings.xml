@@ -2,10 +2,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--suppress MissingTranslation -->
-    <string name="version_number">1.2</string>
+    <string name="version_number" translatable="false">1.2</string>
     <!--suppress MissingTranslation -->
-    <string name="email_feedback">musicflashlightfeedback@gmail.com</string>
+    <string name="email_feedback" translatable="false">musicflashlightfeedback@gmail.com</string>
     <!--suppress MissingTranslation -->
-    <string name="play_store_id">com.gmail.btheo95.musicflashlight</string>
+    <string name="play_store_id" translatable="false">com.gmail.btheo95.musicflashlight</string>
 
 </resources>

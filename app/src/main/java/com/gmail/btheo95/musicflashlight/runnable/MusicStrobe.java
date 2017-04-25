@@ -23,6 +23,7 @@ public final class MusicStrobe extends StrobeRunnable {
     private static final float THRESHOLD_COEFFICIENT = 1.25f;
     private static final int THREAD_WAITING_TIME = 50;
     private static final int MAX_AVERAGE_AMPLITUDE = (int) (32767 - (THRESHOLD_COEFFICIENT -1 ) * 32767); // related to THRESHOLD_COEFFICIENT
+    private static final int MIN_AVERAGE_AMPLITUDE = 100;
 //    private static final int THREAD_WAITING_TIME = 25;
 
     private int mAverageAmplitude;
@@ -53,7 +54,7 @@ public final class MusicStrobe extends StrobeRunnable {
                     calculateAutoThreshold(currentAmplitude);
                 }
                 Log.v(TAG, "current amplitude: " + currentAmplitude);
-                Log.v(TAG, "threshold: " + mAverageAmplitude + " - " + Thread.currentThread().getName());
+                Log.v(TAG, "average amplitude: " + mAverageAmplitude);
 
                 TimeUnit.MILLISECONDS.sleep(THREAD_WAITING_TIME);
             }
@@ -76,6 +77,8 @@ public final class MusicStrobe extends StrobeRunnable {
 
         if (mAverageAmplitude > MAX_AVERAGE_AMPLITUDE) {
             mAverageAmplitude = MAX_AVERAGE_AMPLITUDE;
+        } else if (mAverageAmplitude < MIN_AVERAGE_AMPLITUDE) {
+            mAverageAmplitude = MIN_AVERAGE_AMPLITUDE;
         }
 //        double correction = currentAmplitude * AMPLITUDE_CORRECTION_COEFFICIENT;
 //        if (currentAmplitude > mAverageAmplitude) {
