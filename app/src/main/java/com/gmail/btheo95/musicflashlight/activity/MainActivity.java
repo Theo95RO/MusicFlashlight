@@ -272,6 +272,10 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     protected void onStart() {
         super.onStart();
         startResources();
+        //checks if the notification should disappear when flashlight is on at startup
+        if (mFlashIsOn && mFlashServiceIsBound) {
+            mFlashlightService.stopForeground();
+        }
     }
 
     @Override
@@ -286,11 +290,17 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onStop() {
+        //checks if the flashlight should run in background
         if (!shouldRunInBackground() && mFlashIsOn && !isChangingConfigurations()) {
             fabAction(false);
         }
+        //checks if the resources should be stopped
         if (!mFlashIsOn && !isChangingConfigurations()) {
             Strobe.getInstance().stop();
+        }
+        //checks if should show a notification if the flashlight is running in backgroud
+        if (mFlashIsOn && mFlashServiceIsBound && !isChangingConfigurations()) {
+            mFlashlightService.startForeground();
         }
         super.onStop();
     }

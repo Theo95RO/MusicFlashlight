@@ -54,7 +54,7 @@ public class FlashlightIntentService extends IntentService {
             return;
         }
 
-        startForeground(NOTIFICATION_ID, buildForegroundNotification());
+//        startForeground(NOTIFICATION_ID, buildForegroundNotification());
 
         handleAction(intent);
     }
@@ -137,6 +137,14 @@ public class FlashlightIntentService extends IntentService {
             mStrobe.shutdown(shouldCloseResources);
         }
         stopSelf();
+    }
+
+    public void startForeground() {
+        startForeground(NOTIFICATION_ID, buildForegroundNotification());
+    }
+
+    public void stopForeground() {
+        stopForeground(true);
     }
 
     public void changeAction(Context context, ServiceConnection serviceConnection, Intent intent) {
