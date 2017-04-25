@@ -484,9 +484,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     private void changeFabIcon() {
         if (mFlashIsOn) {
-            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_flash_off_white_24dp));
+            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_filled_light_bulb_white_24dp));
         } else {
-            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_flash_on_white_24dp));
+            mFab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_empty_light_bulb_white_24dp));
         }
     }
 

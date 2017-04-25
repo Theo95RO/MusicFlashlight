@@ -1,8 +1,10 @@
 package com.gmail.btheo95.musicflashlight.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
+import android.view.WindowManager;
 
 /**
  * Created by btheo on 4/5/2017.
@@ -25,5 +27,4 @@ public class Utils {
         Log.d(TAG, "isMyServiceRunning() -> false");
         return false;
     }
-
 }

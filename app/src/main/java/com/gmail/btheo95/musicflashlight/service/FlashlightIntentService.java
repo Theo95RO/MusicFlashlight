@@ -75,7 +75,7 @@ public class FlashlightIntentService extends IntentService {
         return new NotificationCompat.Builder(this)
                 .setContentTitle(getString(R.string.notification_flash_title))
                 .setContentText(getString(R.string.notification_flash_content))
-                .setSmallIcon(R.drawable.ic_flash_on_white_24dp)
+                .setSmallIcon(R.drawable.ic_filled_light_bulb_white_24dp)
                 .setOngoing(true)
                 .setContentIntent(pendingIntent)
                 .build();

@@ -40,7 +40,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_margin="16dp"
             android:clickable="true"
-            android:src="@drawable/ic_flash_on_white_24dp"
+            android:src="@drawable/ic_empty_light_bulb_white_24dp"
             app:backgroundTint="@color/primary"
             app:elevation="4dp"
             app:fabSize="normal" />
