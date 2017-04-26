@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_teal);
         ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(this, R.color.primary_dark));
         setTaskDescription(taskDesc);
+
+//        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.primary));
     }
 
     private void initialiseViews() {
