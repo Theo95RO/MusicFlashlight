@@ -27,4 +27,13 @@ public class Utils {
         Log.d(TAG, "isMyServiceRunning() -> false");
         return false;
     }
+
+    public static void preventScreenSleeping(Activity activity) {
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    public static void allowScreenSleeping(Activity activity) {
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
 }

@@ -266,16 +266,24 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (mAdView != null) {
             mAdView.resume();
         }
+
+        if (mFlashIsOn) {
+            //checks if the notification should disappear when flashlight is on at startup
+            if (mFlashServiceIsBound) {
+                mFlashlightService.stopForeground();
+            }
+
+            //checks if the screen should be prevented from sleeping
+            if (!shouldRunInBackground()) {
+                Utils.preventScreenSleeping(this);
+            }
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         startResources();
-        //checks if the notification should disappear when flashlight is on at startup
-        if (mFlashIsOn && mFlashServiceIsBound) {
-            mFlashlightService.stopForeground();
-        }
     }
 
     @Override
@@ -447,8 +455,14 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         changeFabIcon();
 
         if (!mFlashIsOn) {
+            if (!shouldRunInBackground()) {
+                Utils.allowScreenSleeping(this);
+            }
             stopFlashlight();
         } else {
+            if (!shouldRunInBackground()) {
+                Utils.preventScreenSleeping(this);
+            }
             startFlashlight();
         }
     }
