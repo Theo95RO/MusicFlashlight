@@ -22,6 +22,9 @@ import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
 import com.gmail.btheo95.musicflashlight.runnable.ClassicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.MusicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.StrobeRunnable;
+import com.gmail.btheo95.musicflashlight.runnable.Torch;
+
+import java.io.IOException;
 
 public class FlashlightIntentService extends IntentService {
 
@@ -30,9 +33,9 @@ public class FlashlightIntentService extends IntentService {
 
     public static final String ACTION_MUSIC_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.MUSIC";
     public static final String ACTION_STROBE_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.STROBE";
+    private static final String ACTION_TORCH_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.TORCH";
 
     public static final String EXTRA_FREQUENCY = "extra_frequency";
-
     public static final int DEFAULT_FREQUENCY = 50;
 
     private final IBinder mBinder = new LocalBinder();
@@ -94,6 +97,12 @@ public class FlashlightIntentService extends IntentService {
         return intent;
     }
 
+    public static Intent createIntentForActionTorch(Context context) {
+        Intent intent = new Intent(context, FlashlightIntentService.class);
+        intent.setAction(ACTION_TORCH_FLASHLIGHT);
+        return intent;
+    }
+
     public static Intent bindAndStart(Context context, ServiceConnection serviceConnection, Intent intent) {
         start(context, intent);
         bind(context, serviceConnection, intent);
@@ -109,34 +118,37 @@ public class FlashlightIntentService extends IntentService {
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public void unbindAndStop(final Context context, final ServiceConnection serviceConnection, boolean shouldCloseResources) {
+    public void unbindAndStop(final Context context, final ServiceConnection serviceConnection) {
+        unbindAndStop(context, serviceConnection, true, false);
+//        stop();
+//        unbind(context, serviceConnection);
+    }
 
-        if (shouldCloseResources) {
-            mStrobe.setOnStopListener(new StrobeRunnable.OnStopListener() {
-                @Override
-                public void onStop() {
-                    Log.d(TAG, "started unbinding");
-                    unbind(context, serviceConnection);
-                    Log.d(TAG, "unbind finished");
-                }
-            });
-            Log.d(TAG, "started stopping resource");
-        } else {
-            unbind(context, serviceConnection);
-        }
-        stop(shouldCloseResources);
-
+    public void unbindAndStop(final Context context, final ServiceConnection serviceConnection, boolean shouldTurnFlashOff, boolean shouldCloseResources) {
+        stop(shouldTurnFlashOff, shouldCloseResources);
+        unbind(context, serviceConnection);
     }
 
     public static void unbind(Context context, ServiceConnection serviceConnection) {
         context.unbindService(serviceConnection);
     }
 
-    public void stop(boolean shouldCloseResources) {
+    public void stop(boolean shouldTurnFlashOff, boolean shouldCloseResources) {
+
+
         if (mStrobe != null) {
-            mStrobe.shutdown(shouldCloseResources);
+            mStrobe.setShouldCloseResources(shouldCloseResources);
+            mStrobe.setShouldTurnFlashOffAtShutDown(shouldTurnFlashOff);
+            mStrobe.setOnStopListener(new StrobeRunnable.OnStopListener() {
+                @Override
+                public void onStop() {
+                    stopSelf();
+                }
+            });
+
+            mStrobe.shutdown();
         }
-        stopSelf();
+//        stopSelf();
     }
 
     public void startForeground() {
@@ -147,8 +159,13 @@ public class FlashlightIntentService extends IntentService {
         stopForeground(true);
     }
 
-    public void changeAction(Context context, ServiceConnection serviceConnection, Intent intent) {
-        unbindAndStop(context, serviceConnection, false);
+    public void changeAction(Context context, ServiceConnection serviceConnection, final Intent intent) {
+
+//        stop(false);
+//        start(context, intent);
+//
+//
+        unbindAndStop(context, serviceConnection, false, false);
         bindAndStart(context, serviceConnection, intent);
     }
 
@@ -162,9 +179,15 @@ public class FlashlightIntentService extends IntentService {
         startStrobe();
     }
 
+
+    private void handleActionTorchFlashlight() {
+        mStrobe = new Torch();
+        startStrobe();
+    }
+
     private void startStrobe() {
         try {
-            mStrobe.run();
+            mStrobe.start();
         } catch (FlashAlreadyInUseException e) {
             broadcastCameraAlreadyInUse();
             mStrobe.shutdown();
@@ -176,6 +199,9 @@ public class FlashlightIntentService extends IntentService {
             mStrobe.shutdown();
         } catch (MicNotReachebleException e) {
             broadcastMicNotReacheble();
+            mStrobe.shutdown();
+        } catch (IOException e) {
+            //TODO: broadcast a message
             mStrobe.shutdown();
         }
     }
@@ -213,6 +239,9 @@ public class FlashlightIntentService extends IntentService {
             case ACTION_STROBE_FLASHLIGHT:
                 int frequency = intent.getExtras().getInt(EXTRA_FREQUENCY, DEFAULT_FREQUENCY);
                 handleActionStrobeFlashlight(frequency);
+                break;
+            case ACTION_TORCH_FLASHLIGHT:
+                handleActionTorchFlashlight();
                 break;
 
             default:

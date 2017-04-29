@@ -1,5 +1,7 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
+import android.util.Log;
+
 import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
 import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
@@ -22,23 +24,15 @@ public class ClassicStrobe extends StrobeRunnable {
     }
 
     @Override
-    public void run() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+    public void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         try {
             while (!mIsRunnableShutdown) {
-                startResourcesIfNotStarted();
                 toggleFlash();
-//                Thread.currentThread().wait(mFrequency);
                 TimeUnit.MILLISECONDS.sleep(mFrequency);
             }
 
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            turnFlashOff();
-            if (mShouldCloseResources) {
-                stopResources();
-//                notifyListener();
-            }
         }
     }
 

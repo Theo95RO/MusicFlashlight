@@ -36,6 +36,7 @@
     <string name="fragment_main_mode">Mod</string>
     <string name="fragment_main_mode_musical">Muzical</string>
     <string name="fragment_main_mode_strobe">Stroboscop</string>
+    <string name="fragment_main_mode_torch">Lanternă</string>
     <string name="fragment_main_switch_run_in_background_title">Rulează în fundal</string>
 
     <!--Strings related to Toasts-->

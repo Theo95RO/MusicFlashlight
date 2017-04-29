@@ -23,7 +23,7 @@ public final class MusicStrobe extends StrobeRunnable {
     private static final float THRESHOLD_COEFFICIENT = 1.25f;
     private static final int THREAD_WAITING_TIME = 50;
     private static final int MAX_AVERAGE_AMPLITUDE = (int) (32767 - (THRESHOLD_COEFFICIENT -1 ) * 32767); // related to THRESHOLD_COEFFICIENT
-    private static final int MIN_AVERAGE_AMPLITUDE = 100;
+    private static final int MIN_AVERAGE_AMPLITUDE = 125;
 //    private static final int THREAD_WAITING_TIME = 25;
 
     private int mAverageAmplitude;
@@ -39,11 +39,12 @@ public final class MusicStrobe extends StrobeRunnable {
         mAverageAmplitude = initialAmplitude;
     }
 
-    public void run() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
-        Log.d(TAG, "run()");
+    @Override
+    public void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+
         try {
             while (!mIsRunnableShutdown) {
-                startResourcesIfNotStarted();
+
                 int currentAmplitude = getMicrophoneAmplitude();
                 if (currentAmplitude > mAverageAmplitude * THRESHOLD_COEFFICIENT) {
                     turnFlashOn();
@@ -53,21 +54,15 @@ public final class MusicStrobe extends StrobeRunnable {
                 if (mAutoThreshold) {
                     calculateAutoThreshold(currentAmplitude);
                 }
+
                 Log.v(TAG, "current amplitude: " + currentAmplitude);
                 Log.v(TAG, "average amplitude: " + mAverageAmplitude);
 
                 TimeUnit.MILLISECONDS.sleep(THREAD_WAITING_TIME);
             }
 
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            Log.d(TAG, "Stopping Strobe: " + Thread.currentThread().getName());
-            turnFlashOff();
-            if (mShouldCloseResources) {
-                stopResources();
-//                notifyListener();
-            }
         }
     }
 

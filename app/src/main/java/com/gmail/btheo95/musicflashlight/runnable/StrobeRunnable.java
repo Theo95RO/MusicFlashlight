@@ -1,5 +1,7 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
+import android.util.Log;
+
 import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
 import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
@@ -14,10 +16,13 @@ import java.io.IOException;
 
 public abstract class StrobeRunnable {
 
+    private static final String TAG = StrobeRunnable.class.getSimpleName();
 
     protected boolean mFlashIsOn = false;
     protected volatile boolean mIsRunnableShutdown = false;
-    protected boolean mShouldCloseResources = true;
+    protected boolean mShouldCloseResources = false;
+    protected boolean mShouldTurnFlashOffAtShutdown = true;
+
     private OnStopListener mOnStopListener;
     private Strobe mStrobe;
 
@@ -25,7 +30,32 @@ public abstract class StrobeRunnable {
         mStrobe = Strobe.getInstance();
     }
 
-    public abstract void run() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException;
+    protected abstract void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException;
+
+    protected void onPreStart() throws MicNotReachebleException, FlashNotReachebleException, CameraNotReachebleException, IOException {
+        startResourcesIfNotStarted();
+    }
+
+    protected void onPostStart() throws FlashAlreadyInUseException {
+
+        Log.d(TAG, "onPostStart()");
+        if (mShouldTurnFlashOffAtShutdown) {
+            Log.d(TAG, "onPostStart() - turning flash off");
+            turnFlashOff();
+        }
+        if (mShouldCloseResources) {
+            Log.d(TAG, "onPostStart() - stopping resources");
+            stopResources();
+        }
+        notifyListener();
+    }
+
+    public void start() throws MicNotReachebleException, FlashNotReachebleException, CameraNotReachebleException, FlashAlreadyInUseException, IOException {
+        onPreStart();
+        onStart();
+        onPostStart();
+    }
+
 
     protected void startResources() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         mStrobe.start();
@@ -33,7 +63,7 @@ public abstract class StrobeRunnable {
 
     protected void stopResources() {
         mStrobe.stop();
-        notifyListener();
+//        notifyListener();
     }
 
     protected void startResourcesIfNotStarted() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
@@ -42,9 +72,17 @@ public abstract class StrobeRunnable {
         }
     }
 
-    public void shutdown(boolean shouldCloseResources) {
+//    public void shutdown(boolean shouldCloseResources) {
+//        mShouldCloseResources = shouldCloseResources;
+//        mIsRunnableShutdown = true;
+//    }
+
+    public void setShouldCloseResources(boolean shouldCloseResources) {
         mShouldCloseResources = shouldCloseResources;
-        mIsRunnableShutdown = true;
+    }
+
+    public void setShouldTurnFlashOffAtShutDown(boolean shouldTurnFlashOffAtShutDown) {
+        mShouldTurnFlashOffAtShutdown = shouldTurnFlashOffAtShutDown;
     }
 
     public void shutdown() {

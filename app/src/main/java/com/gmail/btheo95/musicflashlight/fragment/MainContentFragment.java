@@ -31,7 +31,6 @@ public class MainContentFragment extends Fragment {
     private RadioGroup mRadioGroup;
     private SeekBar mStrobeSeekBar;
     private SwitchCompat mRunInBackgroundSwitch;
-    private TableLayout mRunInBackgroundContainer;
 
     public MainContentFragment() {
     }
@@ -113,10 +112,18 @@ public class MainContentFragment extends Fragment {
                                                   }
         );
 
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        int flashModeRadioButtonPreference = sharedPreferences.getInt(Constants.PREFERENCE_FLASH_MODE_KEY, Constants.PREFERENCE_FLASH_MODE_DEFAULT);
+        mRadioGroup.check(flashModeRadioButtonPreference);
+
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 Log.d(TAG, "Radio checked");
+
+                sharedPreferences.edit()
+                        .putInt(Constants.PREFERENCE_FLASH_MODE_KEY, checkedId)
+                        .apply();
 
                 switch (checkedId) {
                     case R.id.radio_mode_musical:
@@ -126,6 +133,9 @@ public class MainContentFragment extends Fragment {
                     case R.id.radio_mode_strobe:
                         mStrobeSeekBar.setEnabled(true);
                         break;
+
+                    case R.id.radio_mode_torch:
+                        mStrobeSeekBar.setEnabled(false);
 
                     default:
                         break;
@@ -138,7 +148,7 @@ public class MainContentFragment extends Fragment {
 
     private void initialiseRunInBackgroundSwitch(View mainView) {
         mRunInBackgroundSwitch = (SwitchCompat) mainView.findViewById(R.id.switch_run_in_background);
-        mRunInBackgroundContainer = (TableLayout) mainView.findViewById(R.id.run_in_background_container);
+        TableLayout mRunInBackgroundContainer = (TableLayout) mainView.findViewById(R.id.run_in_background_container);
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean switchPreference = sharedPreferences.getBoolean(Constants.PREFERENCE_RUN_IN_BACKGROUND_KEY, Constants.PREFERENCE_RUN_IN_BACKGROUND_DEFAULT);

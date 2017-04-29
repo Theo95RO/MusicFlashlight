@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--suppress MissingTranslation -->
-    <string name="version_number" translatable="false">1.2</string>
+    <string name="version_number" translatable="false">1.3</string>
     <!--suppress MissingTranslation -->
     <string name="email_feedback" translatable="false">musicflashlightfeedback@gmail.com</string>
     <!--suppress MissingTranslation -->

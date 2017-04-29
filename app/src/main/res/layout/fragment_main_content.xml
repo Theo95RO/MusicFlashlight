@@ -70,7 +70,14 @@
                     android:paddingLeft="@dimen/text_margin"
                     android:paddingStart="@dimen/text_margin">
 
+                    <!--Radio Torch-->
+                    <RadioButton
+                        android:id="@+id/radio_mode_torch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fragment_main_mode_torch" />
                     <!--Radio Musical-->
+
                     <RadioButton
                         android:id="@+id/radio_mode_musical"
                         android:layout_width="match_parent"

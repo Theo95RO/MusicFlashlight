@@ -54,6 +54,9 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
+//TODO: Cath IOException from starting resources ?
+//TODO: listener on toggle to allow screen sleeping
+
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -300,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onStop() {
-        //checks if the flashlight should run in background
+        //checks if the flashlight should onStart in background
         if (!shouldRunInBackground() && mFlashIsOn && !isChangingConfigurations()) {
             fabAction(false);
         }
@@ -323,10 +326,12 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             mAdView.destroy();
         }
 
+        //when users closes the app from recents and the flash is on
         if (mFlashServiceIsBound && !isChangingConfigurations()) {
-            //when users closes the app from recents and the flash is on
-            mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, true);
+            mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, true, true);
         }
+
+        //when changing configuration service needs to rebind
         if (mFlashServiceIsBound && isChangingConfigurations()) {
             FlashlightIntentService.unbind(getApplicationContext(), mServiceConnection);
         }
@@ -476,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     private void stopFlashlight() {
-        mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, false);
+        mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection);
         mFlashServiceIsBound = false;
 
     }
@@ -627,6 +632,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
             case R.id.radio_mode_strobe:
                 return FlashlightIntentService.createIntentForActionStrobe(this, getStrobeSeekBarValue());
+
+            case R.id.radio_mode_torch:
+                return FlashlightIntentService.createIntentForActionTorch(this);
 
             default:
                 return null;
