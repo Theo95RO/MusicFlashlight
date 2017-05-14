@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/menu_main_licenses"
-        android:title="@string/menu_main_license"
+    <item
+        android:id="@+id/menu_main_licenses"
         android:icon="@drawable/ic_assignment_black_24dp"
-        app:showAsAction="collapseActionView"/>
+        android:title="@string/menu_main_license"
+        app:showAsAction="collapseActionView" />
 
-    <item android:id="@+id/menu_main_about"
-        android:title="@string/menu_main_about"
+    <item
+        android:id="@+id/menu_main_about"
         android:icon="@drawable/ic_help_black_24dp"
-        app:showAsAction="collapseActionView"/>
+        android:title="@string/menu_main_about"
+        app:showAsAction="collapseActionView" />
 </menu>

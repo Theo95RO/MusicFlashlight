@@ -102,59 +102,55 @@ public class FlashlightIntentService extends IntentService {
         return intent;
     }
 
-    public static Intent bindAndStart(Context context, ServiceConnection serviceConnection, Intent intent) {
-        start(context, intent);
-        bind(context, serviceConnection, intent);
-        return intent;
-    }
-
-    public static Intent start(Context context, Intent intent) {
+    public static Intent startService(Context context, Intent intent) {
         Log.d(TAG, "Starting service");
         context.startService(intent);
         return intent;
     }
 
-    public static void bind(Context context, ServiceConnection serviceConnection, Intent intent) {
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    public void unbindAndStop(final Context context, final ServiceConnection serviceConnection) {
-        unbindAndStop(context, serviceConnection, true, false);
-//        stop();
-//        unbind(context, serviceConnection);
-    }
-
-    public void unbindAndStop(final Context context, final ServiceConnection serviceConnection, boolean shouldTurnFlashOff, boolean shouldCloseResources) {
-        stop(shouldTurnFlashOff, shouldCloseResources);
-        unbind(context, serviceConnection);
-    }
-
-    public static void unbind(Context context, ServiceConnection serviceConnection) {
-        context.unbindService(serviceConnection);
-    }
-
-    public void stop(boolean shouldTurnFlashOff, boolean shouldCloseResources) {
+    public void stopService(boolean shouldTurnFlashOff, boolean shouldCloseResources) {
 
         if (mStrobe != null) {
-            Log.d(TAG, "stopping service - 1");
             mStrobe.setShouldCloseResources(shouldCloseResources);
             mStrobe.setShouldTurnFlashOffAtShutDown(shouldTurnFlashOff);
             mStrobe.setOnStopListener(new StrobeRunnable.OnStopListener() {
                 @Override
                 public void onStop() {
                     stopSelf();
-                    Log.d(TAG, "stopping service - 2");
                 }
             });
 
             mStrobe.shutdown();
-//            stopSelf();
 
         } else {
             Log.e(TAG, "strobe is null when trying to shutdown");
             stopSelf();
         }
-//        stopSelf();
+    }
+
+    public static void unbindService(Context context, ServiceConnection serviceConnection) {
+        context.unbindService(serviceConnection);
+    }
+
+    public static void bindService(Context context, ServiceConnection serviceConnection, Intent intent) {
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public static Intent bindAndStartService(Context context, ServiceConnection serviceConnection, Intent intent) {
+        startService(context, intent);
+        bindService(context, serviceConnection, intent);
+        return intent;
+    }
+
+    public void unbindAndStopService(final Context context, final ServiceConnection serviceConnection) {
+        unbindAndStopService(context, serviceConnection, true, false);
+//        stopService();
+//        unbindService(context, serviceConnection);
+    }
+
+    public void unbindAndStopService(final Context context, final ServiceConnection serviceConnection, boolean shouldTurnFlashOff, boolean shouldCloseResources) {
+        stopService(shouldTurnFlashOff, shouldCloseResources);
+        unbindService(context, serviceConnection);
     }
 
     public void startForeground() {
@@ -165,10 +161,11 @@ public class FlashlightIntentService extends IntentService {
         stopForeground(true);
     }
 
-    public void changeAction(Context context, ServiceConnection serviceConnection, final Intent intent) {
+    public void changeAction(final Intent intent) {
 
-//        stop(false);
-//        start(context, intent);
+//        stopService(false);
+//        startService(context, intent);
+
         Handler handler = new Handler(getMainLooper());
         handler.post(new Runnable() {
             @Override
@@ -184,9 +181,8 @@ public class FlashlightIntentService extends IntentService {
             }
         });
 
-
-//        unbindAndStop(context, serviceConnection, false, false);
-//        bindAndStart(context, serviceConnection, intent);
+//        unbindAndStopService(context, serviceConnection, false, false);
+//        bindAndStartService(context, serviceConnection, intent);
     }
 
     private void handleActionMusicFlashlight() {

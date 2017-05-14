@@ -7,7 +7,6 @@ import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
 import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
 import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,7 +21,7 @@ public final class MusicStrobe extends StrobeRunnable {
     //    private static final double AMPLITUDE_CORRECTION_COEFFICIENT = 0.10;
     private static final float THRESHOLD_COEFFICIENT = 1.25f;
     private static final int THREAD_WAITING_TIME = 50;
-    private static final int MAX_AVERAGE_AMPLITUDE = (int) (32767 - (THRESHOLD_COEFFICIENT -1 ) * 32767); // related to THRESHOLD_COEFFICIENT
+    private static final int MAX_AVERAGE_AMPLITUDE = (int) (32767 - (THRESHOLD_COEFFICIENT - 1) * 32767); // related to THRESHOLD_COEFFICIENT
     private static final int MIN_AVERAGE_AMPLITUDE = 125;
 //    private static final int THREAD_WAITING_TIME = 25;
 

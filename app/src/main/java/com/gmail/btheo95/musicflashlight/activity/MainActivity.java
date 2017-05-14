@@ -51,16 +51,14 @@ import com.gmail.btheo95.musicflashlight.util.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
-//TODO: Cath IOException from starting resources ?
-//TODO: listener on toggle to allow screen sleeping
+//TODO: Catch IOException from starting resources ?
 
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
+    //    private FirebaseAnalytics mFirebaseAnalytics;
     private static final String TAG = MainActivity.class.getName();
 
     private static final int PERMISSIONS_REQUEST_CODE = 0;
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             initialiseRecentView();
@@ -214,27 +212,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
     };
 
-/*
-   private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                IBinder service) {
-
-            Log.d(TAG, "onServiceConnected()");
-            FlashlightIntentService.LocalBinder binder = (FlashlightIntentService.LocalBinder) service;
-            mFlashlightService = binder.getService();
-            mFlashServiceIsBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.d(TAG, "onServiceDisconnected()");
-            mFlashServiceIsBound = false;
-        }
-    };
-*/
-
     private void handleNoMicException() {
         handleException(getString(R.string.toast_no_microphone));
     }
@@ -298,10 +275,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         boolean serviceWasBound = savedInstanceState.getBoolean(STATE_SERVICE_BOUND);
 
-        //TODO: why myServiceIsNotRunning when flash mode is torch
-
         if (serviceWasBound && mFlashIsOn && Utils.isMyServiceRunning(FlashlightIntentService.class, getApplicationContext())) {
-            FlashlightIntentService.bind(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
+            FlashlightIntentService.bindService(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
         } else {
             mFlashIsOn = false;
             mFlashServiceIsBound = false;
@@ -331,18 +306,18 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             mAdView.resume();
         }
 
-//        if (mFlashIsOn) {
-//            //checks if the notification should disappear when flashlight is on at startup
-//            if (mFlashServiceIsBound) {
-//                mFlashlightService.stopForeground();
-//            }
-//            Log.d(TAG, "hereee1");
+        if (mFlashIsOn) {
+            //checks if the notification should disappear when flashlight is on at startup
+            if (mFlashServiceIsBound) {
+                mFlashlightService.stopForeground();
+            }
+
 //            //checks if the screen should be prevented from sleeping
 //            if (!shouldRunInBackground()) {
 //                Log.d(TAG, "here");
 //                Utils.preventScreenSleeping(this);
 //            }
-//        }
+        }
     }
 
     @Override
@@ -386,12 +361,12 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         //when users closes the app from recents and the flash is on
         if (mFlashServiceIsBound && !isChangingConfigurations()) {
-            mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, true, true);
+            mFlashlightService.unbindAndStopService(getApplicationContext(), mServiceConnection, true, true);
         }
 
         //when changing configuration service needs to rebind
         if (mFlashServiceIsBound && isChangingConfigurations()) {
-            FlashlightIntentService.unbind(getApplicationContext(), mServiceConnection);
+            FlashlightIntentService.unbindService(getApplicationContext(), mServiceConnection);
         }
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
@@ -516,12 +491,12 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private void startFlashlight() {
         int checkedRadioId = getCheckedRadioId();
         mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedRadioId);
-        FlashlightIntentService.bindAndStart(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
+        FlashlightIntentService.bindAndStartService(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
     }
 
     private void stopFlashlight() {
         if (mFlashServiceIsBound) {
-            mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection);
+            mFlashlightService.unbindAndStopService(getApplicationContext(), mServiceConnection);
             mFlashServiceIsBound = false;
         }
     }
@@ -555,31 +530,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(25);
     }
-
-//    private void animateFab() {
-//        int initialColor;
-//        int finalColor;
-//        if (!mFlashIsOn) {
-//            initialColor = ContextCompat.getColor(MainActivity.this, R.color.primary);
-//            finalColor = ContextCompat.getColor(MainActivity.this, R.color.accent);
-//        } else {
-//            initialColor = ContextCompat.getColor(MainActivity.this, R.color.accent);
-//            finalColor = ContextCompat.getColor(MainActivity.this, R.color.primary);
-//        }
-//
-//        //could try ObjectAnimator
-//        final ValueAnimator animator = ObjectAnimator.ofInt(initialColor, finalColor);
-//        animator.setEvaluator(new ArgbEvaluator());
-//        animator.setInterpolator(new DecelerateInterpolator(1));
-//        animator.addUpdateListener(new ObjectAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                int animatedValue = (int) animation.getAnimatedValue();
-//                mFab.setBackgroundTintList(ColorStateList.valueOf(animatedValue));
-//            }
-//        });
-//        animator.start();
-//    }
 
     private void showPermissionsRationale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -703,26 +653,12 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     public void onRadioCheckedChanged(RadioGroup group, int checkedId) {
-        Log.d(TAG, "onRadioCheckedChanged");
         if (!mFlashIsOn || !mFlashServiceIsBound) {
             return;
         }
 
-
-//        mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, false, false);
-//        mFlashServiceIsBound = false;
-//        mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
-//        initialiseServiceConnection();
-//        FlashlightIntentService.bindAndStart(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
-
-
-//        mFlashlightService.stop(false, false);
-//        mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
-//        FlashlightIntentService.start(getApplicationContext(), mFlashlightServiceIntent);
-
-
         mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
-        mFlashlightService.changeAction(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
+        mFlashlightService.changeAction(mFlashlightServiceIntent);
     }
 
     @Override
@@ -730,7 +666,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (!mFlashIsOn || !mFlashServiceIsBound) {
             return;
         }
-        Log.d(TAG, "SeekBar value: " + i);
         mFlashlightService.setStrobeFrequency(i);
     }
 

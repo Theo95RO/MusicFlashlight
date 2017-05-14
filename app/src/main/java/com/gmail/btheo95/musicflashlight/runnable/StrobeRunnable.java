@@ -1,6 +1,5 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
-import android.app.PendingIntent;
 import android.util.Log;
 
 import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
