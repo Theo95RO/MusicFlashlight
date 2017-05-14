@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -70,8 +71,6 @@ public class FlashlightIntentService extends IntentService {
     }
 
     private Notification buildForegroundNotification() {
-        Log.d(TAG, "buildForegroundNotification()");
-
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -110,6 +109,7 @@ public class FlashlightIntentService extends IntentService {
     }
 
     public static Intent start(Context context, Intent intent) {
+        Log.d(TAG, "Starting service");
         context.startService(intent);
         return intent;
     }
@@ -135,18 +135,24 @@ public class FlashlightIntentService extends IntentService {
 
     public void stop(boolean shouldTurnFlashOff, boolean shouldCloseResources) {
 
-
         if (mStrobe != null) {
+            Log.d(TAG, "stopping service - 1");
             mStrobe.setShouldCloseResources(shouldCloseResources);
             mStrobe.setShouldTurnFlashOffAtShutDown(shouldTurnFlashOff);
             mStrobe.setOnStopListener(new StrobeRunnable.OnStopListener() {
                 @Override
                 public void onStop() {
                     stopSelf();
+                    Log.d(TAG, "stopping service - 2");
                 }
             });
 
             mStrobe.shutdown();
+//            stopSelf();
+
+        } else {
+            Log.e(TAG, "strobe is null when trying to shutdown");
+            stopSelf();
         }
 //        stopSelf();
     }
@@ -163,10 +169,24 @@ public class FlashlightIntentService extends IntentService {
 
 //        stop(false);
 //        start(context, intent);
-//
-//
-        unbindAndStop(context, serviceConnection, false, false);
-        bindAndStart(context, serviceConnection, intent);
+        Handler handler = new Handler(getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mStrobe.setOnStopListener(new StrobeRunnable.OnStopListener() {
+                    @Override
+                    public void onStop() {
+                        handleAction(intent);
+                    }
+                });
+
+                mStrobe.shutdown();
+            }
+        });
+
+
+//        unbindAndStop(context, serviceConnection, false, false);
+//        bindAndStart(context, serviceConnection, intent);
     }
 
     private void handleActionMusicFlashlight() {
@@ -243,8 +263,8 @@ public class FlashlightIntentService extends IntentService {
             case ACTION_TORCH_FLASHLIGHT:
                 handleActionTorchFlashlight();
                 break;
-
             default:
+                Log.e(TAG, "Starting an action that does not exist");
                 break;
         }
     }

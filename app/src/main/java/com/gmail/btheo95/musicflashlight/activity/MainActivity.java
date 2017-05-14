@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private AdView mAdView;
 
     private FlashlightIntentService mFlashlightService;
+    private ServiceConnection mServiceConnection;
     private Intent mFlashlightServiceIntent;
     private boolean mFlashServiceIsBound = false;
 
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             initialiseRecentView();
         }
         initialiseBroadcastReceiver();
+        initialiseServiceConnection();
         initialiseViews();
         startResources();
 
@@ -161,6 +164,27 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         loadAd();
     }
 
+    private void initialiseServiceConnection() {
+        mServiceConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+
+                Log.d(TAG, "onServiceConnected()");
+                FlashlightIntentService.LocalBinder binder = (FlashlightIntentService.LocalBinder) service;
+                mFlashlightService = binder.getService();
+                mFlashServiceIsBound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                Log.d(TAG, "onServiceDisconnected()");
+                mFlashServiceIsBound = false;
+            }
+        };
+    }
+
     private void initialiseBroadcastReceiver() {
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
                 new IntentFilter(INTENT_FILTER));
@@ -189,6 +213,27 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             }
         }
     };
+
+/*
+   private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                IBinder service) {
+
+            Log.d(TAG, "onServiceConnected()");
+            FlashlightIntentService.LocalBinder binder = (FlashlightIntentService.LocalBinder) service;
+            mFlashlightService = binder.getService();
+            mFlashServiceIsBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.d(TAG, "onServiceDisconnected()");
+            mFlashServiceIsBound = false;
+        }
+    };
+*/
 
     private void handleNoMicException() {
         handleException(getString(R.string.toast_no_microphone));
@@ -253,6 +298,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         boolean serviceWasBound = savedInstanceState.getBoolean(STATE_SERVICE_BOUND);
 
+        //TODO: why myServiceIsNotRunning when flash mode is torch
+
         if (serviceWasBound && mFlashIsOn && Utils.isMyServiceRunning(FlashlightIntentService.class, getApplicationContext())) {
             FlashlightIntentService.bind(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
         } else {
@@ -261,6 +308,18 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
         updateFabState();
         updateFragmentState();
+
+        //or in on resume
+        if (mFlashIsOn) {
+            //checks if the notification should disappear when flashlight is on at startup
+            if (mFlashServiceIsBound) {
+                mFlashlightService.stopForeground();
+            }
+            //checks if the screen should be prevented from sleeping
+            if (!shouldRunInBackground()) {
+                Utils.preventScreenSleeping(this);
+            }
+        }
     }
 
     @Override
@@ -272,17 +331,18 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             mAdView.resume();
         }
 
-        if (mFlashIsOn) {
-            //checks if the notification should disappear when flashlight is on at startup
-            if (mFlashServiceIsBound) {
-                mFlashlightService.stopForeground();
-            }
-
-            //checks if the screen should be prevented from sleeping
-            if (!shouldRunInBackground()) {
-                Utils.preventScreenSleeping(this);
-            }
-        }
+//        if (mFlashIsOn) {
+//            //checks if the notification should disappear when flashlight is on at startup
+//            if (mFlashServiceIsBound) {
+//                mFlashlightService.stopForeground();
+//            }
+//            Log.d(TAG, "hereee1");
+//            //checks if the screen should be prevented from sleeping
+//            if (!shouldRunInBackground()) {
+//                Log.d(TAG, "here");
+//                Utils.preventScreenSleeping(this);
+//            }
+//        }
     }
 
     @Override
@@ -293,8 +353,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause()");
-
         if (mAdView != null) {
             mAdView.pause();
         }
@@ -311,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         if (!mFlashIsOn && !isChangingConfigurations()) {
             Strobe.getInstance().stop();
         }
-        //checks if should show a notification if the flashlight is running in backgroud
+        //checks if should show a notification if the flashlight is running in background
         if (mFlashIsOn && mFlashServiceIsBound && !isChangingConfigurations()) {
             mFlashlightService.startForeground();
         }
@@ -391,25 +449,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
     }
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-
-            Log.d(TAG, "onServiceConnected()");
-            FlashlightIntentService.LocalBinder binder = (FlashlightIntentService.LocalBinder) service;
-            mFlashlightService = binder.getService();
-            mFlashServiceIsBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.d(TAG, "onServiceDisconnected()");
-            mFlashServiceIsBound = false;
-        }
-    };
-
     private void loadAd() {
         mAdView.loadAd(mAdRequest);
         mAdView.setVisibility(View.VISIBLE);
@@ -481,9 +520,10 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     private void stopFlashlight() {
-        mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection);
-        mFlashServiceIsBound = false;
-
+        if (mFlashServiceIsBound) {
+            mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection);
+            mFlashServiceIsBound = false;
+        }
     }
 
     private void updateFabState() {
@@ -663,11 +703,23 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     public void onRadioCheckedChanged(RadioGroup group, int checkedId) {
+        Log.d(TAG, "onRadioCheckedChanged");
         if (!mFlashIsOn || !mFlashServiceIsBound) {
             return;
         }
 
-        mFlashServiceIsBound = false;
+
+//        mFlashlightService.unbindAndStop(getApplicationContext(), mServiceConnection, false, false);
+//        mFlashServiceIsBound = false;
+//        mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
+//        initialiseServiceConnection();
+//        FlashlightIntentService.bindAndStart(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
+
+
+//        mFlashlightService.stop(false, false);
+//        mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
+//        FlashlightIntentService.start(getApplicationContext(), mFlashlightServiceIntent);
+
 
         mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
         mFlashlightService.changeAction(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
@@ -680,5 +732,16 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
         Log.d(TAG, "SeekBar value: " + i);
         mFlashlightService.setStrobeFrequency(i);
+    }
+
+    @Override
+    public void onRunInBackgroundSwitchCheckChanged(CompoundButton compoundButton, boolean checked) {
+        if (mFlashIsOn) {
+            if (!checked) {
+                Utils.preventScreenSleeping(MainActivity.this);
+            } else {
+                Utils.allowScreenSleeping(MainActivity.this);
+            }
+        }
     }
 }

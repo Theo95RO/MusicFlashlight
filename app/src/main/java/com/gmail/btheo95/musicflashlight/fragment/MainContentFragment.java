@@ -115,11 +115,14 @@ public class MainContentFragment extends Fragment {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         int flashModeRadioButtonPreference = sharedPreferences.getInt(Constants.PREFERENCE_FLASH_MODE_KEY, Constants.PREFERENCE_FLASH_MODE_DEFAULT);
         mRadioGroup.check(flashModeRadioButtonPreference);
+        if (flashModeRadioButtonPreference == R.id.radio_mode_strobe) {
+            mStrobeSeekBar.setEnabled(true);
+        }
+
 
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d(TAG, "Radio checked");
 
                 sharedPreferences.edit()
                         .putInt(Constants.PREFERENCE_FLASH_MODE_KEY, checkedId)
@@ -158,9 +161,14 @@ public class MainContentFragment extends Fragment {
         mRunInBackgroundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //notify activity
+                mListener.onRunInBackgroundSwitchCheckChanged(compoundButton, b);
+
+                //modify preference
                 sharedPreferences.edit()
                         .putBoolean(Constants.PREFERENCE_RUN_IN_BACKGROUND_KEY, b)
                         .apply();
+
             }
         });
 
@@ -199,6 +207,8 @@ public class MainContentFragment extends Fragment {
         void onRadioCheckedChanged(RadioGroup group, int checkedId);
 
         void onSeekBarProgressChanged(SeekBar seekBar, int i, boolean b);
+
+        void onRunInBackgroundSwitchCheckChanged(CompoundButton compoundButton, boolean checked);
 
     }
 

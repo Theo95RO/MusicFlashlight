@@ -43,7 +43,7 @@ public final class MusicStrobe extends StrobeRunnable {
     public void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
 
         try {
-            while (!mIsRunnableShutdown) {
+            while (!mIsRunnableShutdown.get()) {
 
                 int currentAmplitude = getMicrophoneAmplitude();
                 if (currentAmplitude > mAverageAmplitude * THRESHOLD_COEFFICIENT) {

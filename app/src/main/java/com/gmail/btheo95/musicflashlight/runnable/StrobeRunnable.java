@@ -1,5 +1,6 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
+import android.app.PendingIntent;
 import android.util.Log;
 
 import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
@@ -9,6 +10,7 @@ import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by btheo on 3/28/2017.
@@ -19,7 +21,7 @@ public abstract class StrobeRunnable {
     private static final String TAG = StrobeRunnable.class.getSimpleName();
 
     protected boolean mFlashIsOn = false;
-    protected volatile boolean mIsRunnableShutdown = false;
+    protected AtomicBoolean mIsRunnableShutdown = new AtomicBoolean(false);
     protected boolean mShouldCloseResources = false;
     protected boolean mShouldTurnFlashOffAtShutdown = true;
 
@@ -44,7 +46,6 @@ public abstract class StrobeRunnable {
             turnFlashOff();
         }
         if (mShouldCloseResources) {
-            Log.d(TAG, "onPostStart() - stopping resources");
             stopResources();
         }
         notifyListener();
@@ -85,9 +86,9 @@ public abstract class StrobeRunnable {
         mShouldTurnFlashOffAtShutdown = shouldTurnFlashOffAtShutDown;
     }
 
-    public void shutdown() {
+    public synchronized void shutdown() {
         //Thread.currentThread().interrupt();
-        mIsRunnableShutdown = true;
+        mIsRunnableShutdown.set(true);
     }
 
     protected void toggleFlash() throws FlashAlreadyInUseException {
@@ -116,6 +117,8 @@ public abstract class StrobeRunnable {
     protected void notifyListener() {
         if (mOnStopListener != null) {
             mOnStopListener.onStop();
+        } else {
+            Log.w(TAG, "Listener null");
         }
     }
 

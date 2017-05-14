@@ -26,7 +26,7 @@ public class ClassicStrobe extends StrobeRunnable {
     @Override
     public void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
         try {
-            while (!mIsRunnableShutdown) {
+            while (!mIsRunnableShutdown.get()) {
                 toggleFlash();
                 TimeUnit.MILLISECONDS.sleep(mFrequency);
             }

@@ -19,7 +19,7 @@ public final class Strobe {
     private SoundMeter mSoundMeter = null;
     private boolean mIsStarted = false;
 
-    public Strobe() {
+    private Strobe() {
     }
 
     public static Strobe getInstance() {
