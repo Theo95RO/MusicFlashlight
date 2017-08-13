@@ -652,7 +652,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     @Override
-    public void onRadioCheckedChanged(RadioGroup group, int checkedId) {
+    public void onFlashModeRadioCheckedChanged(RadioGroup group, int checkedId) {
         if (!mFlashIsOn || !mFlashServiceIsBound) {
             return;
         }
@@ -662,11 +662,21 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     @Override
-    public void onSeekBarProgressChanged(SeekBar seekBar, int i, boolean b) {
+    public void onMusicalModeRadioCheckedChanged(RadioGroup group, int checkedId) {
+        //TODO:
+    }
+
+    @Override
+    public void onStrobeSeekBarProgressChanged(SeekBar seekBar, int i, boolean b) {
         if (!mFlashIsOn || !mFlashServiceIsBound) {
             return;
         }
         mFlashlightService.setStrobeFrequency(i);
+    }
+
+    @Override
+    public void onMusicalSeekBarProgressChanged(SeekBar seekBar, int i, boolean b) {
+        //TODO:
     }
 
     @Override
