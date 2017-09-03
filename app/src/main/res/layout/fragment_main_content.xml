@@ -1,156 +1,274 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.gmail.btheo95.musicflashlight.fragment.MainContentFragment">
 
-    <ScrollView
+    <!--Options List-->
+    <LinearLayout
+        android:id="@+id/options_list_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:ignore="UselessParent">
+        android:divider="?attr/dividerVertical"
+        android:orientation="vertical"
+        android:paddingBottom="144dp"
+        android:showDividers="middle">
+        <!--android:dividerPadding="@dimen/activity_horizontal_margin"-->
 
-        <!--Options List-->
+
+        <!--Mode Container-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="?attr/dividerVertical"
-            android:orientation="vertical"
-            android:paddingBottom="144dp"
-            android:showDividers="middle">
-            <!--android:dividerPadding="@dimen/activity_horizontal_margin"-->
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
 
-
-            <!--Mode Container-->
+            <!--Mode Title-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
 
-                <!--Mode Title-->
+                <!--Mode Title Icon-->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/fragment_main_mode"
+                    android:src="@drawable/ic_highlight_black_24dp"
+                    android:tint="@color/accent" />
+
+                <!--Mode Tilte Text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:layout_weight="1"
+                    android:text="@string/fragment_main_mode"
+                    android:textColor="@color/primary_text" />
+
+            </LinearLayout>
+
+            <!--Radios Container-->
+            <RadioGroup
+                android:id="@+id/radio_group_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:animateLayoutChanges="true"
+                android:paddingEnd="@dimen/text_margin"
+                android:paddingStart="@dimen/text_margin">
+
+                <!--Radio Torch-->
+                <RadioButton
+                    android:id="@+id/radio_mode_torch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_main_mode_torch" />
+
+                <!--Radio Strobe-->
+                <RadioButton
+                    android:id="@+id/radio_mode_strobe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_main_mode_strobe" />
+
+                <!--Radio Musical-->
+                <RadioButton
+                    android:id="@+id/radio_mode_musical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/fragment_main_mode_musical" />
+
+
+            </RadioGroup><!--Radios Container-->
+
+        </LinearLayout><!--Mode Container-->
+
+
+        <!--Strobe mode settings container-->
+        <net.cachapa.expandablelayout.ExpandableLayout
+            android:id="@+id/expandable_layout_strobe_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:el_duration="@android:integer/config_mediumAnimTime"
+            app:el_expanded="true"
+            app:el_parallax="0.5">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
                     tools:ignore="UseCompoundDrawables">
 
-                    <!--Mode Title Icon-->
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/fragment_main_mode"
-                        android:src="@drawable/ic_highlight_black_24dp"
+                        android:contentDescription="@string/fragment_main_strobe_settings"
+                        android:src="@drawable/ic_settings_black_24dp"
                         android:tint="@color/accent" />
 
-                    <!--Mode Tilte Text-->
+                    <TextView
+
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/text_margin"
+                        android:layout_marginRight="@dimen/text_margin"
+                        android:layout_weight="1"
+                        android:text="@string/fragment_main_strobe_settings"
+                        android:textColor="@color/primary_text" />
+
+                </LinearLayout>
+
+                <!--Strobe settings container-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/frequency" />
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:paddingTop="@dimen/activity_vertical_margin"
+                        android:shrinkColumns="1">
+
+                        <TableRow
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            tools:ignore="UselessParent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/low" />
+
+                            <!--Strobe Slider-->
+                            <SeekBar
+                                android:id="@+id/seek_bar_strobe"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:progress="50" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/high" />
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <!--Strobe mode container-->
+        </net.cachapa.expandablelayout.ExpandableLayout>
+
+        <!--Musical mode settings container-->
+        <net.cachapa.expandablelayout.ExpandableLayout
+            android:id="@+id/expandable_layout_musical_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:el_duration="@android:integer/config_mediumAnimTime"
+            app:el_expanded="true"
+            app:el_parallax="0.5">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <!--Title Musical Mode Settings-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:gravity="center_vertical"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/fragment_main_music_settings"
+                        android:src="@drawable/ic_settings_black_24dp"
+                        android:tint="@color/accent" />
+
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/text_margin"
                         android:layout_marginRight="@dimen/text_margin"
                         android:layout_weight="1"
-                        android:text="@string/fragment_main_mode"
+                        android:text="@string/fragment_main_music_settings"
                         android:textColor="@color/primary_text" />
 
-                </LinearLayout>
-
-                <!--Radios Container-->
-                <RadioGroup
-                    android:id="@+id/radio_group_mode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/text_margin"
-                    android:animateLayoutChanges="true"
-                    android:paddingLeft="@dimen/text_margin"
-                    android:paddingStart="@dimen/text_margin">
-
-                    <!--Radio Torch-->
-                    <RadioButton
-                        android:id="@+id/radio_mode_torch"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/fragment_main_mode_torch" />
-
-                    <!--Radio Strobe-->
-                    <RadioButton
-                        android:id="@+id/radio_mode_strobe"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/fragment_main_mode_strobe" />
-
-                    <!--Radio Musical-->
-                    <RadioButton
-                        android:id="@+id/radio_mode_musical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="@string/fragment_main_mode_musical" />
-
-
-                </RadioGroup><!--Radios Container-->
-
-            </LinearLayout><!--Mode Container-->
-
-
-            <!--Strobe mode settings container-->
-            <net.cachapa.expandablelayout.ExpandableLayout
-                android:id="@+id/expandable_layout_strobe_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:el_duration="@android:integer/config_mediumAnimTime"
-                app:el_expanded="true"
-                app:el_parallax="0.5">
+                </LinearLayout><!--Title Musical Mode Settings-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/activity_vertical_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin">
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:orientation="vertical">
 
-                    <LinearLayout
+                    <RadioGroup
+                        android:id="@+id/radio_group_musical_sensibility"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:gravity="center_vertical">
+                        android:layout_height="wrap_content">
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_settings_black_24dp"
-                            android:tint="@color/accent" />
-
-                        <TextView
-
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/text_margin"
-                            android:layout_marginRight="@dimen/text_margin"
-                            android:layout_weight="1"
-                            android:text="Strobe Mode Settings"
-                            android:textColor="@color/primary_text" />
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/text_margin"
-                        android:layout_marginRight="@dimen/text_margin"
-                        android:orientation="vertical">
-
-                        <TextView
+                        <RadioButton
+                            android:id="@+id/radio_musical_sensibility_auto"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Frequency" />
+                            android:checked="true"
+                            android:text="@string/fragment_main_music_auto_sensibility"
+                            android:textColor="@color/secondary_text" />
+
+                        <RadioButton
+                            android:id="@+id/radio_musical_sensibility_manual"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fragment_main_music_manual_sensibility"
+                            android:textColor="@color/secondary_text" />
+
+                    </RadioGroup>
+
+                    <!--Music sensibility container-->
+                    <net.cachapa.expandablelayout.ExpandableLayout
+                        android:id="@+id/expandable_layout_musical_seek_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:el_duration="@android:integer/config_mediumAnimTime"
+                        app:el_expanded="true"
+                        app:el_parallax="0.5">
 
                         <TableLayout
                             android:layout_width="match_parent"
@@ -162,260 +280,100 @@
                             <TableRow
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_vertical">
+                                android:gravity="center_vertical"
+                                tools:ignore="UselessParent">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Low" />
+                                    android:text="@string/low" />
 
-                                <!--Strobe Slider-->
+                                <!--Musical Slider-->
                                 <SeekBar
-                                    android:id="@+id/seek_bar_strobe"
+                                    android:id="@+id/seek_bar_musical"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
+                                    android:minHeight="16dp"
                                     android:progress="50" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="High" />
+                                    android:text="@string/high" />
                             </TableRow>
                         </TableLayout>
-                    </LinearLayout>
+
+
+                        <!--Music sensibility container-->
+                    </net.cachapa.expandablelayout.ExpandableLayout>
+
                 </LinearLayout>
-                <!--Strobe mode container-->
-            </net.cachapa.expandablelayout.ExpandableLayout>
+
+
+            </LinearLayout>
 
             <!--Musical mode settings container-->
-            <net.cachapa.expandablelayout.ExpandableLayout
-                android:id="@+id/expandable_layout_musical_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:el_duration="@android:integer/config_mediumAnimTime"
-                app:el_expanded="true"
-                app:el_parallax="0.5">
+        </net.cachapa.expandablelayout.ExpandableLayout>
 
+        <!--Keep Flash On Container-->
+        <TableLayout
+            android:id="@+id/run_in_background_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:shrinkColumns="1">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                tools:ignore="UselessParent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/fragment_main_switch_run_in_background_title"
+                    android:src="@drawable/ic_brightness_high_black_24dp"
+                    android:tint="@color/accent" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/activity_vertical_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin">
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <!--Title Musical Mode Settings-->
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:gravity="center_vertical">
+                        android:text="@string/fragment_main_switch_run_in_background_title"
+                        android:textColor="@color/primary_text" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_settings_black_24dp"
-                            android:tint="@color/accent" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/text_margin"
-                            android:layout_marginRight="@dimen/text_margin"
-                            android:layout_weight="1"
-                            android:text="Musical Mode Settings"
-                            android:textColor="@color/primary_text" />
-
-                    </LinearLayout><!--Title Musical Mode Settings-->
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/text_margin"
-                        android:layout_marginRight="@dimen/text_margin"
-                        android:orientation="vertical">
-
-                        <RadioGroup
-                            android:id="@+id/radio_group_musical_sensibility"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <RadioButton
-                                android:id="@+id/radio_musical_sensibility_auto"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:checked="true"
-                                android:text="Auto sensibility"
-                                android:textColor="@color/secondary_text" />
-
-                            <RadioButton
-                                android:id="@+id/radio_musical_sensibility_manual"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Manual sensibility"
-                                android:textColor="@color/secondary_text" />
-
-                        </RadioGroup>
-
-                        <!--Auto sensibility switch-->
-                        <!--<TableLayout-->
-                        <!--android:id="@+id/auto_music_sensibility_container"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginLeft="@dimen/text_margin"-->
-                        <!--android:layout_marginStart="@dimen/text_margin"-->
-                        <!--android:background="?attr/selectableItemBackground"-->
-                        <!--android:clickable="true"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:paddingEnd="@dimen/text_margin"-->
-                        <!--android:paddingRight="@dimen/text_margin"-->
-                        <!--android:shrinkColumns="0">-->
-
-                        <!--<TableRow-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:paddingBottom="16dp">-->
-
-
-                        <!--<TextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginEnd="@dimen/text_margin"-->
-                        <!--android:layout_marginRight="@dimen/text_margin"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:text="Auto sensibility" />-->
-
-                        <!--<android.support.v7.widget.SwitchCompat-->
-                        <!--android:id="@+id/switch_auto_musical"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:checked="true"-->
-                        <!--android:gravity="end" />-->
-                        <!--</TableRow>-->
-
-                        <!--</TableLayout>&lt;!&ndash;Auto sensibility switch&ndash;&gt;-->
-
-                        <!--Music sensibility container-->
-                        <net.cachapa.expandablelayout.ExpandableLayout
-                            android:id="@+id/expandable_layout_musical_seek_bar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:el_duration="@android:integer/config_mediumAnimTime"
-                            app:el_expanded="true"
-                            app:el_parallax="0.5">
-
-
-                            <!--<TextView-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:text="Sensibility" />-->
-
-                            <TableLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:paddingTop="@dimen/activity_vertical_margin"
-                                android:shrinkColumns="1">
-
-                                <TableRow
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center_vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Low" />
-
-                                    <!--Musical Slider-->
-                                    <SeekBar
-                                        android:id="@+id/seek_bar_musical"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:minHeight="16dp"
-                                        android:progress="50" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="High" />
-                                </TableRow>
-                            </TableLayout>
-
-
-                            <!--Music sensibility container-->
-                        </net.cachapa.expandablelayout.ExpandableLayout>
-
-                    </LinearLayout>
-
+                        android:text="@string/fragment_main_switch_run_in_background_description"
+                        android:textColor="@color/secondary_text" />
 
                 </LinearLayout>
 
-                <!--Musical mode settings container-->
-            </net.cachapa.expandablelayout.ExpandableLayout>
-
-            <!--Keep Flash On Container-->
-            <TableLayout
-                android:id="@+id/run_in_background_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:shrinkColumns="1">
-
-                <TableRow
-                    android:layout_width="wrap_content"
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_run_in_background"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
+                    android:checked="true"
+                    android:gravity="end" />
+            </TableRow>
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_brightness_high_black_24dp"
-                        android:tint="@color/accent" />
+        </TableLayout><!--Keep Flash On Container-->
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/text_margin"
-                        android:layout_marginRight="@dimen/text_margin"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/fragment_main_switch_run_in_background_title"
-                            android:textColor="@color/primary_text" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/fragment_main_switch_run_in_background_description"
-                            android:textColor="@color/secondary_text" />
-
-                    </LinearLayout>
-
-                    <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/switch_run_in_background"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:gravity="end" />
-                </TableRow>
-
-            </TableLayout><!--Keep Flash On Container-->
-
-        </LinearLayout><!--Options List-->
-    </ScrollView>
-</FrameLayout>
+    </LinearLayout><!--Options List-->
+</ScrollView>

@@ -3,22 +3,22 @@ package com.gmail.btheo95.musicflashlight.fragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 
 import com.gmail.btheo95.musicflashlight.R;
-import com.gmail.btheo95.musicflashlight.runnable.MusicStrobe;
 import com.gmail.btheo95.musicflashlight.util.Constants;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -36,21 +36,15 @@ public class MainContentFragment extends Fragment {
     private SwitchCompat mRunInBackgroundSwitch;
     private TableLayout mRunInBackgroundContainer;
     private RadioGroup mModeRadioGroup;
-    private RadioGroup mMusicalSensibilityRadioGroup;
+    private RadioGroup mMusicModeRadioGroup;
     private SeekBar mStrobeSeekBar;
-    private SeekBar mMusicalSeekBar;
-    //    private SwitchCompat mMusicalAutoSensSwitch;
-    //    private TableLayout mMusicalAutoSensContainer;
+    private SeekBar mMusicSeekBar;
     private ExpandableLayout mExpandableLayoutStrobeSettings;
-    private ExpandableLayout mExpandableLayoutMusicalSettings;
-    private ExpandableLayout mExpandableLayoutMusicalSeekbar;
+    private ExpandableLayout mExpandableLayoutMusicSettings;
+    private ExpandableLayout mExpandableLayoutMusicSeekbar;
 
     public MainContentFragment() {
     }
-
-//    public static MainContentFragment newInstance() {
-//        return new MainContentFragment();
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,49 +96,36 @@ public class MainContentFragment extends Fragment {
 
     private void initialiseViews(View mainView) {
         mModeRadioGroup = (RadioGroup) mainView.findViewById(R.id.radio_group_mode);
-        mMusicalSensibilityRadioGroup = (RadioGroup) mainView.findViewById(R.id.radio_group_musical_sensibility);
+        mMusicModeRadioGroup = (RadioGroup) mainView.findViewById(R.id.radio_group_musical_sensibility);
         mStrobeSeekBar = (SeekBar) mainView.findViewById(R.id.seek_bar_strobe);
-        mMusicalSeekBar = (SeekBar) mainView.findViewById(R.id.seek_bar_musical);
+        mMusicSeekBar = (SeekBar) mainView.findViewById(R.id.seek_bar_musical);
         mRunInBackgroundSwitch = (SwitchCompat) mainView.findViewById(R.id.switch_run_in_background);
         mRunInBackgroundContainer = (TableLayout) mainView.findViewById(R.id.run_in_background_container);
         mExpandableLayoutStrobeSettings = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_strobe_settings);
-        mExpandableLayoutMusicalSettings = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_musical_settings);
-        mExpandableLayoutMusicalSeekbar = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_musical_seek_bar);
-//        mMusicalAutoSensSwitch = (SwitchCompat) mainView.findViewById(R.id.switch_auto_musical);
-//        mMusicalAutoSensContainer = (TableLayout) mainView.findViewById(R.id.auto_music_sensibility_container);
+        mExpandableLayoutMusicSettings = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_musical_settings);
+        mExpandableLayoutMusicSeekbar = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_musical_seek_bar);
 
+        initialisePaddingForLandscape(mainView);
         initialiseRunInBackgroundSwitch();
         initialiseMusicalSettings();
         initialiseStrobeSeekbar();
         initialiseMusicalSeekbar();
         initialiseModeRadioGroup();
-
-//        if (mMusicalAutoSensSwitch.isChecked()) {
-//            mExpandableLayoutMusicalSeekbar.collapse(false);
-//        }
-
     }
 
-    private void initialiseMusicalSeekbar() {
-        mMusicalSeekBar.setMax(MusicStrobe.MAX_AVERAGE_AMPLITUDE);
-        mMusicalSeekBar.setProgress(MusicStrobe.MIN_AVERAGE_AMPLITUDE);
-        mMusicalSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                                                       @Override
-                                                       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                                                           mListener.onMusicalSeekBarProgressChanged(seekBar, calculateSeekBarProgress(i), b);
-                                                       }
+    private void initialisePaddingForLandscape(View mainView) {
+        int orientation = getResources().getConfiguration().orientation;
+        // ORIENTATION_SQUARE is ised for some old and bugged devices
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE
+                || orientation == Configuration.ORIENTATION_SQUARE) {
 
-                                                       @Override
-                                                       public void onStartTrackingTouch(SeekBar seekBar) {
+            int padding_in_dp = 64;
+            final float scale = getResources().getDisplayMetrics().density;
+            int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
 
-                                                       }
-
-                                                       @Override
-                                                       public void onStopTrackingTouch(SeekBar seekBar) {
-
-                                                       }
-                                                   }
-        );
+            LinearLayout optionsListContainer = (LinearLayout) mainView.findViewById(R.id.options_list_container);
+            optionsListContainer.setPadding(0,0,0,padding_in_px);
+        }
     }
 
     private void initialiseModeRadioGroup() {
@@ -167,13 +148,61 @@ public class MainContentFragment extends Fragment {
         });
     }
 
+    private void initialiseMusicalSettings() {
+        int musicalSensibilityRadioButtonPreference = mSharedPreferences.getInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY,
+                Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_DEFAULT);
+        mMusicModeRadioGroup.check(musicalSensibilityRadioButtonPreference);
+        handleMusicalModeRadioButtonChange(musicalSensibilityRadioButtonPreference, false);
+
+        mMusicModeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                mSharedPreferences.edit()
+                        .putInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY, checkedId)
+                        .apply();
+
+                handleMusicalModeRadioButtonChange(checkedId);
+                mListener.onMusicalModeRadioCheckedChanged(group, checkedId);
+            }
+
+        });
+    }
+
+    private void initialiseMusicalSeekbar() {
+        int valuePreference = mSharedPreferences.getInt(Constants.PREFERENCE_MUSIC_SEEK_BAR_VALUE, Constants.MUSIC_SEEK_BAR_DEFAULT_VALUE);
+
+        mMusicSeekBar.setMax(Constants.MUSIC_SEEK_BAR_MAX);
+        mMusicSeekBar.setProgress(valuePreference);
+        mMusicSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                     @Override
+                                                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                                                         mListener.onMusicalSeekBarProgressChanged(seekBar, calculateMusicSeekBarProgress(i), b);
+                                                     }
+
+                                                     @Override
+                                                     public void onStartTrackingTouch(SeekBar seekBar) {
+                                                     }
+
+                                                     @Override
+                                                     public void onStopTrackingTouch(SeekBar seekBar) {
+                                                         mSharedPreferences.edit()
+                                                                 .putInt(Constants.PREFERENCE_MUSIC_SEEK_BAR_VALUE, seekBar.getProgress())
+                                                                 .apply();
+                                                     }
+                                                 }
+        );
+    }
+
     private void initialiseStrobeSeekbar() {
+        int valuePreference = mSharedPreferences.getInt(Constants.PREFERENCE_STROBE_SEEK_BAR_VALUE, Constants.STROBE_SEEK_BAR_DEFAULT_VALUE);
+
         mStrobeSeekBar.setMax(Constants.STROBE_SEEK_BAR_MAX);
-        mStrobeSeekBar.setProgress(Constants.STROBE_SEEK_BAR_DEFAULT_VALUE);
+        mStrobeSeekBar.setProgress(valuePreference);
         mStrobeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                       @Override
                                                       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                                                          mListener.onStrobeSeekBarProgressChanged(seekBar, calculateSeekBarProgress(i), b);
+                                                          mListener.onStrobeSeekBarProgressChanged(seekBar, calculateStrobeSeekBarProgress(i), b);
                                                       }
 
                                                       @Override
@@ -183,7 +212,9 @@ public class MainContentFragment extends Fragment {
 
                                                       @Override
                                                       public void onStopTrackingTouch(SeekBar seekBar) {
-
+                                                          mSharedPreferences.edit()
+                                                                  .putInt(Constants.PREFERENCE_STROBE_SEEK_BAR_VALUE, seekBar.getProgress())
+                                                                  .apply();
                                                       }
                                                   }
         );
@@ -221,37 +252,15 @@ public class MainContentFragment extends Fragment {
         });
     }
 
-    private void initialiseMusicalSettings() {
-        int musicalSensibilityRadioButtonPreference = mSharedPreferences.getInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY,
-                Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_DEFAULT);
-        mMusicalSensibilityRadioGroup.check(musicalSensibilityRadioButtonPreference);
-        handleMusicalModeRadioButtonChange(musicalSensibilityRadioButtonPreference, false);
-
-        mMusicalSensibilityRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                mSharedPreferences.edit()
-                        .putInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY, checkedId)
-                        .apply();
-
-                handleMusicalModeRadioButtonChange(checkedId);
-                mListener.onMusicalModeRadioCheckedChanged(group, checkedId);
-            }
-
-        });
-    }
-
     private void handleMusicalModeRadioButtonChange(int checkedId) {
         handleMusicalModeRadioButtonChange(checkedId, true);
     }
 
     private void handleMusicalModeRadioButtonChange(int checkedId, boolean shouldAnimate) {
-        shouldAnimate = true; // TODO: Delete in future release of expandLay
         if (checkedId == R.id.radio_musical_sensibility_manual) {
-            mExpandableLayoutMusicalSeekbar.expand(shouldAnimate);
+            mExpandableLayoutMusicSeekbar.expand(shouldAnimate);
         } else {
-            mExpandableLayoutMusicalSeekbar.collapse(shouldAnimate);
+            mExpandableLayoutMusicSeekbar.collapse(shouldAnimate);
         }
     }
 
@@ -260,7 +269,6 @@ public class MainContentFragment extends Fragment {
     }
 
     private void handleFlashModeRadioButtonChange(int checkedId, boolean shouldAnimate) {
-        shouldAnimate = true; // TODO: Delete in future release of expandLay
         if (checkedId != R.id.radio_mode_strobe) {
             mExpandableLayoutStrobeSettings.collapse(shouldAnimate);
         } else {
@@ -268,9 +276,9 @@ public class MainContentFragment extends Fragment {
         }
 
         if (checkedId != R.id.radio_mode_musical) {
-            mExpandableLayoutMusicalSettings.collapse(shouldAnimate);
+            mExpandableLayoutMusicSettings.collapse(shouldAnimate);
         } else {
-            mExpandableLayoutMusicalSettings.expand(shouldAnimate);
+            mExpandableLayoutMusicSettings.expand(shouldAnimate);
         }
     }
 
@@ -284,12 +292,24 @@ public class MainContentFragment extends Fragment {
         }
     }
 
-    private int calculateSeekBarProgress(int value) {
-        return Constants.STROBE_SEEK_BAR_MAX - value + Constants.STROBE_SEEK_BAR_MIN;
+    private int calculateStrobeSeekBarProgress(int value) {
+        int returnedValue = Constants.STROBE_SEEK_BAR_MAX - value + Constants.STROBE_SEEK_BAR_MIN;
+        Log.d(TAG, "Strobe seekBark value: " + returnedValue);
+        return returnedValue;
     }
 
-    public int getCheckedRadioId() {
+    private int calculateMusicSeekBarProgress(int value) {
+        int returnedValue = Constants.MUSIC_SEEK_BAR_MAX - value + Constants.MUSIC_SEEK_BAR_MIN;
+        Log.d(TAG, "Music seekBark value: " + returnedValue);
+        return returnedValue;
+    }
+
+    public int getCheckedModeRadioId() {
         return mModeRadioGroup.getCheckedRadioButtonId();
+    }
+
+    public int getCheckedMusicModeRadioId() {
+        return mMusicModeRadioGroup.getCheckedRadioButtonId();
     }
 
     public interface OnFragmentInteractionListener {
@@ -305,59 +325,11 @@ public class MainContentFragment extends Fragment {
         void onMusicalModeRadioCheckedChanged(RadioGroup group, int checkedId);
     }
 
-//    public static void expand(final View v) {
-//        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        final int targetHeight = v.getMeasuredHeight();
-//
-//        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-//        v.getLayoutParams().height = 1;
-//        v.setVisibility(View.VISIBLE);
-//        Animation a = new Animation() {
-//            @Override
-//            protected void applyTransformation(float interpolatedTime, Transformation t) {
-//                v.getLayoutParams().height = interpolatedTime == 1
-//                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-//                        : (int) (targetHeight * interpolatedTime);
-//                v.requestLayout();
-//            }
-//
-//            @Override
-//            public boolean willChangeBounds() {
-//                return true;
-//            }
-//        };
-//
-//        // 1dp/ms
-//        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density) * 5);
-//        v.startAnimation(a);
-//    }
-//
-//    public static void collapse(final View v) {
-//        final int initialHeight = v.getMeasuredHeight();
-//
-//        Animation a = new Animation() {
-//            @Override
-//            protected void applyTransformation(float interpolatedTime, Transformation t) {
-//                if (interpolatedTime == 1) {
-//                    v.setVisibility(View.GONE);
-//                } else {
-//                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-//                    v.requestLayout();
-//                }
-//            }
-//
-//            @Override
-//            public boolean willChangeBounds() {
-//                return true;
-//            }
-//        };
-//
-//        // 1dp/ms
-//        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 5);
-//        v.startAnimation(a);
-//    }
-
     public int getStrobeSeekBarValue() {
-        return calculateSeekBarProgress(mStrobeSeekBar.getProgress());
+        return calculateStrobeSeekBarProgress(mStrobeSeekBar.getProgress());
+    }
+
+    public int getMusicSeekBarValue() {
+        return calculateMusicSeekBarProgress(mMusicSeekBar.getProgress());
     }
 }

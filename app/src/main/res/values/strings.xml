@@ -38,6 +38,10 @@
     <string name="fragment_main_mode_torch">Torch</string>
     <string name="fragment_main_switch_run_in_background_title">Run in background</string>
     <string name="fragment_main_switch_run_in_background_description">When minimising the app</string>
+    <string name="fragment_main_music_settings">Musical Mode Settings</string>
+    <string name="fragment_main_strobe_settings">Strobe Mode Settings</string>
+    <string name="fragment_main_music_manual_sensibility">Manual sensibility</string>
+    <string name="fragment_main_music_auto_sensibility">Auto sensibility</string>
 
     <!--Strings related to Toasts-->
     <string name="toast_no_camera">Device camera is not reacheble</string>
@@ -46,17 +50,9 @@
     <string name="toast_error">An error has occurred</string>
     <string name="toast_no_microphone">Device microphone not reacheble</string>
 
-    <!--
-    &lt;!&ndash;Strings related to warning fragment&ndash;&gt;
-    <string name="fragment_warning_title"><B>Warning</B></string>
-    <string name="fragment_warning_subtitle">Your device flashlight is not accessible.</string>
-    <string name="fragment_warning_description">
-            Possible causes: \n
-        - another app may use your device camera \n
-        - your device may not have a flashlight \n
-        - your device may not have a camera :-)
-    </string>
--->
-
+    <!--General Strings-->
+    <string name="frequency">Frequency</string>
+    <string name="low">Low</string>
+    <string name="high">High</string>
 
 </resources>

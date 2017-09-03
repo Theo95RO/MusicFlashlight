@@ -38,6 +38,12 @@
     <string name="fragment_main_mode_strobe">Stroboscop</string>
     <string name="fragment_main_mode_torch">Lanternă</string>
     <string name="fragment_main_switch_run_in_background_title">Rulează în fundal când aplicația este minimizată</string>
+    <string name="fragment_main_music_settings">Setări mod muzical</string>
+    <string name="fragment_main_strobe_settings">Setări mod stroboscop</string>
+    <string name="fragment_main_music_manual_sensibility">Sensibilitate manuală</string>
+    <string name="fragment_main_music_auto_sensibility">Sensibilitate automată</string>
+
+
 
     <!--Strings related to Toasts-->
     <string name="toast_no_camera">Camera dispozitivului nu este accesibilă</string>
@@ -45,5 +51,11 @@
     <string name="toast_camera_already_in_use">Altă aplicație folosește camea</string>
     <string name="toast_error">S-a produs o eroare</string>
     <string name="toast_no_microphone">Microfonul dispozitivului nu este accesibil</string>
+
+    <!--General Strings-->
+    <string name="frequency">Frecvență</string>
+    <string name="low">Mică</string>
+    <string name="high">Mare</string>
+
 
 </resources>

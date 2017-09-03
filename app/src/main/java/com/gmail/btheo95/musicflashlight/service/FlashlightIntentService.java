@@ -24,6 +24,7 @@ import com.gmail.btheo95.musicflashlight.runnable.ClassicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.MusicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.StrobeRunnable;
 import com.gmail.btheo95.musicflashlight.runnable.Torch;
+import com.gmail.btheo95.musicflashlight.util.Constants;
 
 import java.io.IOException;
 
@@ -32,12 +33,15 @@ public class FlashlightIntentService extends IntentService {
     private static final String TAG = FlashlightIntentService.class.getSimpleName();
     private static final int NOTIFICATION_ID = 1337;
 
-    public static final String ACTION_MUSIC_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.MUSIC";
+    public static final String ACTION_MANUAL_MUSIC_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.MANUAL_MUSIC";
+    public static final String ACTION_AUTO_MUSIC_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.AUTO_MUSIC";
     public static final String ACTION_STROBE_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.STROBE";
     private static final String ACTION_TORCH_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.TORCH";
 
     public static final String EXTRA_FREQUENCY = "extra_frequency";
-    public static final int DEFAULT_FREQUENCY = 50;
+    public static final String EXTRA_SENSIBILITY = "extra_sensibility";
+    public static final int DEFAULT_STROBE_FREQUENCY = Constants.STROBE_SEEK_BAR_DEFAULT_VALUE;
+    public static final int DEFAULT_MANUAL_MUSIC_SENSIBILITY = Constants.MUSIC_SEEK_BAR_DEFAULT_VALUE;
 
     private final IBinder mBinder = new LocalBinder();
     private StrobeRunnable mStrobe;
@@ -83,9 +87,16 @@ public class FlashlightIntentService extends IntentService {
                 .build();
     }
 
-    public static Intent createIntentForActionMusical(Context context) {
+    public static Intent createIntentForActionMusicalAuto(Context context) {
         Intent intent = new Intent(context, FlashlightIntentService.class);
-        intent.setAction(ACTION_MUSIC_FLASHLIGHT);
+        intent.setAction(ACTION_AUTO_MUSIC_FLASHLIGHT);
+        return intent;
+    }
+
+    public static Intent createIntentForActionMusicalManual(Context context, int thresholdCoefficient) {
+        Intent intent = new Intent(context, FlashlightIntentService.class);
+        intent.setAction(ACTION_MANUAL_MUSIC_FLASHLIGHT);
+        intent.putExtra(EXTRA_SENSIBILITY, thresholdCoefficient);
         return intent;
     }
 
@@ -185,8 +196,13 @@ public class FlashlightIntentService extends IntentService {
 //        bindAndStartService(context, serviceConnection, intent);
     }
 
-    private void handleActionMusicFlashlight() {
+    private void handleActionAutoMusicFlashlight() {
         mStrobe = new MusicStrobe();
+        startStrobe();
+    }
+
+    private void handleActionManualMusicFlashlight(int thresholdCoefficient) {
+        mStrobe = new MusicStrobe(false, thresholdCoefficient);
         startStrobe();
     }
 
@@ -249,11 +265,15 @@ public class FlashlightIntentService extends IntentService {
         final String action = intent.getAction();
 
         switch (action) {
-            case ACTION_MUSIC_FLASHLIGHT:
-                handleActionMusicFlashlight();
+            case ACTION_AUTO_MUSIC_FLASHLIGHT:
+                handleActionAutoMusicFlashlight();
+                break;
+            case ACTION_MANUAL_MUSIC_FLASHLIGHT:
+                int thresholdCoefficient = intent.getExtras().getInt(EXTRA_SENSIBILITY, DEFAULT_MANUAL_MUSIC_SENSIBILITY);
+                handleActionManualMusicFlashlight(thresholdCoefficient);
                 break;
             case ACTION_STROBE_FLASHLIGHT:
-                int frequency = intent.getExtras().getInt(EXTRA_FREQUENCY, DEFAULT_FREQUENCY);
+                int frequency = intent.getExtras().getInt(EXTRA_FREQUENCY, DEFAULT_STROBE_FREQUENCY);
                 handleActionStrobeFlashlight(frequency);
                 break;
             case ACTION_TORCH_FLASHLIGHT:
@@ -268,6 +288,26 @@ public class FlashlightIntentService extends IntentService {
     public void setStrobeFrequency(int frequency) {
         if (mStrobe instanceof ClassicStrobe) {
             ((ClassicStrobe) mStrobe).setFrequency(frequency);
+        }
+    }
+
+    public void setMusicSensibility(int sensibility) {
+        if (mStrobe instanceof MusicStrobe) {
+            ((MusicStrobe) mStrobe).setThresholdCoefficient(sensibility);
+        }
+    }
+
+    public void setMusicModeAuto() {
+        if (mStrobe instanceof MusicStrobe) {
+            Log.d(TAG, "setMusicModeAuto()");
+            ((MusicStrobe) mStrobe).setAutoThreshold();
+        }
+    }
+
+    public void setMusicModeManual(int thresholdCoefficient) {
+        if (mStrobe instanceof MusicStrobe) {
+            Log.d(TAG, "setMusicModeManual()");
+            ((MusicStrobe) mStrobe).setManualThreshold(thresholdCoefficient);
         }
     }
 

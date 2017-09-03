@@ -32,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -489,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     private void startFlashlight() {
-        int checkedRadioId = getCheckedRadioId();
+        int checkedRadioId = getCheckedModeRadioId();
         mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedRadioId);
         FlashlightIntentService.bindAndStartService(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
     }
@@ -618,7 +619,15 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private Intent getIntentForServiceByCheckedRadioId(int checkedRadioId) {
         switch (checkedRadioId) {
             case R.id.radio_mode_musical:
-                return FlashlightIntentService.createIntentForActionMusical(this);
+                switch (getCheckMusicModeRadioId()) {
+                    case R.id.radio_musical_sensibility_auto:
+                        return FlashlightIntentService.createIntentForActionMusicalAuto(this);
+                    case R.id.radio_musical_sensibility_manual:
+                        int value = mMainContentFragment.getMusicSeekBarValue();
+                        return FlashlightIntentService.createIntentForActionMusicalManual(this, value);
+                    default:
+                        return null;
+                }
 
             case R.id.radio_mode_strobe:
                 return FlashlightIntentService.createIntentForActionStrobe(this, getStrobeSeekBarValue());
@@ -638,12 +647,20 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         return 0;
     }
 
-    private int getCheckedRadioId() {
+    private int getCheckedModeRadioId() {
         if (mMainContentFragment != null) {
-            return mMainContentFragment.getCheckedRadioId();
+            return mMainContentFragment.getCheckedModeRadioId();
         }
-        Log.d(TAG, "Fragment is null");
+        Log.w(TAG, "Fragment is null");
         return R.id.radio_mode_musical;
+    }
+
+    private int getCheckMusicModeRadioId() {
+        if (mMainContentFragment != null) {
+            return mMainContentFragment.getCheckedMusicModeRadioId();
+        }
+        Log.w(TAG, "Fragment is null");
+        return R.id.radio_musical_sensibility_auto;
     }
 
     @Override
@@ -663,7 +680,20 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     public void onMusicalModeRadioCheckedChanged(RadioGroup group, int checkedId) {
-        //TODO:
+        if (!mFlashIsOn || !mFlashServiceIsBound) {
+            return;
+        }
+        switch (checkedId) {
+            case R.id.radio_musical_sensibility_auto:
+                mFlashlightService.setMusicModeAuto();
+                break;
+            case R.id.radio_musical_sensibility_manual:
+                int thresholdCoefficient = mMainContentFragment.getMusicSeekBarValue();
+                mFlashlightService.setMusicModeManual(thresholdCoefficient);
+                break;
+            default:
+                Log.w(TAG, "Inexistent checked ID in onMusicalModeRadioCheckedChanged()");
+        }
     }
 
     @Override
@@ -676,7 +706,10 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     public void onMusicalSeekBarProgressChanged(SeekBar seekBar, int i, boolean b) {
-        //TODO:
+        if (!mFlashIsOn || !mFlashServiceIsBound) {
+            return;
+        }
+        mFlashlightService.setMusicSensibility(i);
     }
 
     @Override
