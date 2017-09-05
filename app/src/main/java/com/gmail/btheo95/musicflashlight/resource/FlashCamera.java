@@ -61,11 +61,21 @@ public class FlashCamera {
         }
         mDummySurfaceTexture = new SurfaceTexture(0);
         mCamera.setPreviewTexture(mDummySurfaceTexture);
-        mCamera.startPreview();
 
-        mParametersFlashOn = mCamera.getParameters();
+        try {
+            mCamera.startPreview();
+        } catch (RuntimeException ex) {
+            throw new CameraNotReachebleException();
+        }
+
+        try {
+            mParametersFlashOn = mCamera.getParameters();
+        } catch (RuntimeException ex) {
+            mCamera.stopPreview();
+            throw new FlashNotReachebleException();
+        }
+
         //depends on device
-
         List<String> flashModesList = mCamera.getParameters().getSupportedFlashModes();
         if (flashModesList == null) {
             throw new FlashNotReachebleException();
