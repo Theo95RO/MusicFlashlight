@@ -54,8 +54,6 @@ import com.google.android.gms.ads.AdView;
 
 import java.io.IOException;
 
-//TODO: Catch IOException from starting resources ?
-
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
     //    private FirebaseAnalytics mFirebaseAnalytics;
@@ -687,11 +685,11 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 mFlashlightService.setMusicModeAuto();
                 break;
             case R.id.radio_musical_sensibility_manual:
-                int thresholdCoefficient = mMainContentFragment.getMusicSeekBarValue();
-                mFlashlightService.setMusicModeManual(thresholdCoefficient);
+                int threshold = mMainContentFragment.getMusicSeekBarValue();
+                mFlashlightService.setMusicModeManual(threshold);
                 break;
             default:
-                Log.w(TAG, "Inexistent checked ID in onMusicalModeRadioCheckedChanged()");
+                Log.w(TAG, "Nonexistent checked ID in onMusicalModeRadioCheckedChanged()");
         }
     }
 

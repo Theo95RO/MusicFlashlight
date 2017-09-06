@@ -226,14 +226,11 @@ public class FlashlightIntentService extends IntentService {
         } catch (FlashNotReachebleException e) {
             broadcastFlashNotReacheble();
             mStrobe.shutdown();
-        } catch (CameraNotReachebleException e) {
+        } catch (CameraNotReachebleException | IOException e) {
             broadcastCameraNotReacheble();
             mStrobe.shutdown();
         } catch (MicNotReachebleException e) {
             broadcastMicNotReacheble();
-            mStrobe.shutdown();
-        } catch (IOException e) {
-            //TODO: broadcast a message
             mStrobe.shutdown();
         }
     }
@@ -293,7 +290,7 @@ public class FlashlightIntentService extends IntentService {
 
     public void setMusicSensibility(int sensibility) {
         if (mStrobe instanceof MusicStrobe) {
-            ((MusicStrobe) mStrobe).setThresholdCoefficient(sensibility);
+            ((MusicStrobe) mStrobe).setThreshold(sensibility);
         }
     }
 
@@ -304,10 +301,10 @@ public class FlashlightIntentService extends IntentService {
         }
     }
 
-    public void setMusicModeManual(int thresholdCoefficient) {
+    public void setMusicModeManual(int threshold) {
         if (mStrobe instanceof MusicStrobe) {
             Log.d(TAG, "setMusicModeManual()");
-            ((MusicStrobe) mStrobe).setManualThreshold(thresholdCoefficient);
+            ((MusicStrobe) mStrobe).setManualThreshold(threshold);
         }
     }
 
