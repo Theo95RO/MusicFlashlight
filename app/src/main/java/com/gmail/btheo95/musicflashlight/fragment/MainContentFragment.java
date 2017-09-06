@@ -124,15 +124,23 @@ public class MainContentFragment extends Fragment {
             int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
 
             LinearLayout optionsListContainer = (LinearLayout) mainView.findViewById(R.id.options_list_container);
-            optionsListContainer.setPadding(0,0,0,padding_in_px);
+            optionsListContainer.setPadding(0, 0, 0, padding_in_px);
         }
     }
 
-    private void initialiseModeRadioGroup() {
+    public void checkDefaultFlashModeRadioBtn() {
         int flashModeRadioButtonPreference = mSharedPreferences.getInt(Constants.PREFERENCE_FLASH_MODE_KEY, Constants.PREFERENCE_FLASH_MODE_DEFAULT);
+        if (flashModeRadioButtonPreference != R.id.radio_mode_musical
+                && flashModeRadioButtonPreference != R.id.radio_mode_strobe
+                && flashModeRadioButtonPreference != R.id.radio_mode_torch) {
+            flashModeRadioButtonPreference = Constants.PREFERENCE_FLASH_MODE_DEFAULT;
+        }
         mModeRadioGroup.check(flashModeRadioButtonPreference);
         handleFlashModeRadioButtonChange(flashModeRadioButtonPreference, false);
+    }
 
+    private void initialiseModeRadioGroup() {
+        checkDefaultFlashModeRadioBtn();
         mModeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -148,12 +156,19 @@ public class MainContentFragment extends Fragment {
         });
     }
 
-    private void initialiseMusicalSettings() {
+    public void checkDefaultMusicSensRadioBtn() {
         int musicalSensibilityRadioButtonPreference = mSharedPreferences.getInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY,
                 Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_DEFAULT);
+        if (musicalSensibilityRadioButtonPreference != R.id.radio_musical_sensibility_auto
+                && musicalSensibilityRadioButtonPreference != R.id.radio_musical_sensibility_manual) {
+            musicalSensibilityRadioButtonPreference = Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_DEFAULT;
+        }
         mMusicModeRadioGroup.check(musicalSensibilityRadioButtonPreference);
         handleMusicalModeRadioButtonChange(musicalSensibilityRadioButtonPreference, false);
+    }
 
+    private void initialiseMusicalSettings() {
+        checkDefaultMusicSensRadioBtn();
         mMusicModeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

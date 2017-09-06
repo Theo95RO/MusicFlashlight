@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     private void startFlashlight() {
         int checkedRadioId = getCheckedModeRadioId();
-        mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedRadioId);
+        mFlashlightServiceIntent = getIntentForService(checkedRadioId);
         FlashlightIntentService.bindAndStartService(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
     }
 
@@ -623,6 +623,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                         int value = mMainContentFragment.getMusicSeekBarValue();
                         return FlashlightIntentService.createIntentForActionMusicalManual(this, value);
                     default:
+                        Log.w(TAG, "Invalid checkedRadioId -> returning null");
                         return null;
                 }
 
@@ -633,8 +634,19 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 return FlashlightIntentService.createIntentForActionTorch(this);
 
             default:
+                Log.w(TAG, "Invalid checkedRadioId -> returning null");
                 return null;
         }
+    }
+
+    private Intent getIntentForService(int checkedRadioId) {
+        Intent intent = getIntentForServiceByCheckedRadioId(checkedRadioId);
+        if (intent == null) {
+            mMainContentFragment.checkDefaultFlashModeRadioBtn();
+            mMainContentFragment.checkDefaultMusicSensRadioBtn();
+            intent = getIntentForServiceByCheckedRadioId(checkedRadioId);
+        }
+        return intent;
     }
 
     private int getStrobeSeekBarValue() {
@@ -671,7 +683,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             return;
         }
 
-        mFlashlightServiceIntent = getIntentForServiceByCheckedRadioId(checkedId);
+        mFlashlightServiceIntent = getIntentForService(checkedId);
         mFlashlightService.changeAction(mFlashlightServiceIntent);
     }
 
