@@ -37,7 +37,7 @@
     <string name="fragment_main_mode_strobe">Strobe</string>
     <string name="fragment_main_mode_torch">Torch</string>
     <string name="fragment_main_switch_run_in_background_title">Run in background</string>
-    <string name="fragment_main_switch_run_in_background_description">When minimising the app</string>
+    <string name="fragment_main_switch_run_in_background_description">when minimising the app</string>
     <string name="fragment_main_music_settings">Musical Mode Settings</string>
     <string name="fragment_main_strobe_settings">Strobe Mode Settings</string>
     <string name="fragment_main_music_manual_sensibility">Manual sensibility</string>

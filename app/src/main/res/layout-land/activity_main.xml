@@ -22,8 +22,7 @@
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-1150549264167400/6107689840" />
-        <!--ads:adUnitId="ca-app-pub-1150549264167400/5769729579" />-->
+        ads:adUnitId="ca-app-pub-1150549264167400/5769729579" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
