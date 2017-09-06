@@ -29,27 +29,6 @@ public class FlashCamera {
     public FlashCamera() {
     }
 
-    public static boolean deviceHasFlashlight() {
-        Camera camera = Camera.open();
-        boolean hasFlash = (camera.getParameters().getSupportedFlashModes() != null);
-        camera.release();
-        return hasFlash;
-    }
-
-    public static boolean deviceHasCamera() {
-        Camera camera = Camera.open();
-        if (camera == null) {
-            return false;
-        } else {
-            camera.release();
-            return true;
-        }
-    }
-
-    public static boolean deviceFlashIsReachenle() {
-        return deviceHasCamera() && deviceHasFlashlight();
-    }
-
     public void startCamera() throws IOException, CameraNotReachebleException, FlashNotReachebleException {
         try {
             mCamera = Camera.open();

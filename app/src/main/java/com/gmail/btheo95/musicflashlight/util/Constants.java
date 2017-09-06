@@ -1,7 +1,6 @@
 package com.gmail.btheo95.musicflashlight.util;
 
 import com.gmail.btheo95.musicflashlight.R;
-import com.gmail.btheo95.musicflashlight.runnable.MusicStrobe;
 
 /**
  * Created by btheo on 4/6/2017.

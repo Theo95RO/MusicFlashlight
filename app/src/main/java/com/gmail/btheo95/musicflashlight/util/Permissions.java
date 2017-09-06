@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
  */
 
 public class Permissions {
+
     public final static String[] PERMISSIONS = new String[]{
             Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 

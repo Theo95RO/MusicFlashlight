@@ -115,7 +115,7 @@ public class MainContentFragment extends Fragment {
 
     private void initialisePaddingForLandscape(View mainView) {
         int orientation = getResources().getConfiguration().orientation;
-        // ORIENTATION_SQUARE is ised for some old and bugged devices
+        // ORIENTATION_SQUARE is uised for some old and bugged devices
         if (orientation == Configuration.ORIENTATION_LANDSCAPE
                 || orientation == Configuration.ORIENTATION_SQUARE) {
 
