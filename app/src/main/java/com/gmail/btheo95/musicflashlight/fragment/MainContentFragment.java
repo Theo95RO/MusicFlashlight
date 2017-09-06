@@ -95,15 +95,15 @@ public class MainContentFragment extends Fragment {
     }
 
     private void initialiseViews(View mainView) {
-        mModeRadioGroup = (RadioGroup) mainView.findViewById(R.id.radio_group_mode);
-        mMusicModeRadioGroup = (RadioGroup) mainView.findViewById(R.id.radio_group_musical_sensibility);
-        mStrobeSeekBar = (SeekBar) mainView.findViewById(R.id.seek_bar_strobe);
-        mMusicSeekBar = (SeekBar) mainView.findViewById(R.id.seek_bar_musical);
-        mRunInBackgroundSwitch = (SwitchCompat) mainView.findViewById(R.id.switch_run_in_background);
-        mRunInBackgroundContainer = (TableLayout) mainView.findViewById(R.id.run_in_background_container);
-        mExpandableLayoutStrobeSettings = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_strobe_settings);
-        mExpandableLayoutMusicSettings = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_musical_settings);
-        mExpandableLayoutMusicSeekbar = (ExpandableLayout) mainView.findViewById(R.id.expandable_layout_musical_seek_bar);
+        mModeRadioGroup = mainView.findViewById(R.id.radio_group_mode);
+        mMusicModeRadioGroup = mainView.findViewById(R.id.radio_group_musical_sensibility);
+        mStrobeSeekBar = mainView.findViewById(R.id.seek_bar_strobe);
+        mMusicSeekBar = mainView.findViewById(R.id.seek_bar_musical);
+        mRunInBackgroundSwitch = mainView.findViewById(R.id.switch_run_in_background);
+        mRunInBackgroundContainer = mainView.findViewById(R.id.run_in_background_container);
+        mExpandableLayoutStrobeSettings = mainView.findViewById(R.id.expandable_layout_strobe_settings);
+        mExpandableLayoutMusicSettings = mainView.findViewById(R.id.expandable_layout_musical_settings);
+        mExpandableLayoutMusicSeekbar = mainView.findViewById(R.id.expandable_layout_musical_seek_bar);
 
         initialisePaddingForLandscape(mainView);
         initialiseRunInBackgroundSwitch();
@@ -115,7 +115,7 @@ public class MainContentFragment extends Fragment {
 
     private void initialisePaddingForLandscape(View mainView) {
         int orientation = getResources().getConfiguration().orientation;
-        // ORIENTATION_SQUARE is uised for some old and bugged devices
+        // ORIENTATION_SQUARE is used for some old and bugged devices
         if (orientation == Configuration.ORIENTATION_LANDSCAPE
                 || orientation == Configuration.ORIENTATION_SQUARE) {
 
@@ -123,7 +123,7 @@ public class MainContentFragment extends Fragment {
             final float scale = getResources().getDisplayMetrics().density;
             int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
 
-            LinearLayout optionsListContainer = (LinearLayout) mainView.findViewById(R.id.options_list_container);
+            LinearLayout optionsListContainer = mainView.findViewById(R.id.options_list_container);
             optionsListContainer.setPadding(0, 0, 0, padding_in_px);
         }
     }

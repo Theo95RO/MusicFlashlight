@@ -16,10 +16,10 @@ import android.util.Log;
 
 import com.gmail.btheo95.musicflashlight.R;
 import com.gmail.btheo95.musicflashlight.activity.MainActivity;
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachableException;
 import com.gmail.btheo95.musicflashlight.runnable.ClassicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.MusicStrobe;
 import com.gmail.btheo95.musicflashlight.runnable.StrobeRunnable;
@@ -78,6 +78,7 @@ public class FlashlightIntentService extends IntentService {
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        // TODO: Update for Android O
         return new NotificationCompat.Builder(this)
                 .setContentTitle(getString(R.string.notification_flash_title))
                 .setContentText(getString(R.string.notification_flash_content))
@@ -223,13 +224,13 @@ public class FlashlightIntentService extends IntentService {
         } catch (FlashAlreadyInUseException e) {
             broadcastCameraAlreadyInUse();
             mStrobe.shutdown();
-        } catch (FlashNotReachebleException e) {
+        } catch (FlashNotReachableException e) {
             broadcastFlashNotReacheble();
             mStrobe.shutdown();
-        } catch (CameraNotReachebleException | IOException e) {
+        } catch (CameraNotReachableException | IOException e) {
             broadcastCameraNotReacheble();
             mStrobe.shutdown();
-        } catch (MicNotReachebleException e) {
+        } catch (MicNotReachableException e) {
             broadcastMicNotReacheble();
             mStrobe.shutdown();
         }

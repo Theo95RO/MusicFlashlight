@@ -2,10 +2,10 @@ package com.gmail.btheo95.musicflashlight.runnable;
 
 import android.util.Log;
 
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachableException;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 
 import java.io.IOException;
@@ -31,9 +31,9 @@ public abstract class StrobeRunnable {
         mStrobe = Strobe.getInstance();
     }
 
-    protected abstract void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException;
+    protected abstract void onStart() throws FlashAlreadyInUseException, CameraNotReachableException, FlashNotReachableException, MicNotReachableException;
 
-    protected void onPreStart() throws MicNotReachebleException, FlashNotReachebleException, CameraNotReachebleException, IOException {
+    protected void onPreStart() throws MicNotReachableException, FlashNotReachableException, CameraNotReachableException, IOException {
         startResourcesIfNotStarted();
     }
 
@@ -50,14 +50,14 @@ public abstract class StrobeRunnable {
         notifyListener();
     }
 
-    public void start() throws MicNotReachebleException, FlashNotReachebleException, CameraNotReachebleException, FlashAlreadyInUseException, IOException {
+    public void start() throws MicNotReachableException, FlashNotReachableException, CameraNotReachableException, FlashAlreadyInUseException, IOException {
         onPreStart();
         onStart();
         onPostStart();
     }
 
 
-    protected void startResources() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+    protected void startResources() throws IOException, CameraNotReachableException, FlashNotReachableException, MicNotReachableException {
         mStrobe.start();
     }
 
@@ -66,7 +66,7 @@ public abstract class StrobeRunnable {
 //        notifyListener();
     }
 
-    protected void startResourcesIfNotStarted() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+    protected void startResourcesIfNotStarted() throws IOException, CameraNotReachableException, FlashNotReachableException, MicNotReachableException {
         if (!mStrobe.isStarted()) {
             startResources();
         }

@@ -2,10 +2,10 @@ package com.gmail.btheo95.musicflashlight.runnable;
 
 import android.util.Log;
 
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachableException;
 import com.gmail.btheo95.musicflashlight.util.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -39,7 +39,7 @@ public final class MusicStrobe extends StrobeRunnable {
     }
 
     @Override
-    public void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+    public void onStart() throws FlashAlreadyInUseException, CameraNotReachableException, FlashNotReachableException, MicNotReachableException {
 
         try {
             while (!mIsRunnableShutdown.get()) {
@@ -93,7 +93,7 @@ public final class MusicStrobe extends StrobeRunnable {
         this.mAutoThreshold = false;
     }
 
-    public synchronized void setThreshold(int threshold){
+    public synchronized void setThreshold(int threshold) {
         this.mManualThreshold = threshold;
     }
 }

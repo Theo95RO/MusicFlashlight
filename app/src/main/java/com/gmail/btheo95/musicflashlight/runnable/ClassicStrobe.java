@@ -1,9 +1,9 @@
 package com.gmail.btheo95.musicflashlight.runnable;
 
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachableException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +21,7 @@ public class ClassicStrobe extends StrobeRunnable {
     }
 
     @Override
-    public void onStart() throws FlashAlreadyInUseException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+    public void onStart() throws FlashAlreadyInUseException, CameraNotReachableException, FlashNotReachableException, MicNotReachableException {
         try {
             while (!mIsRunnableShutdown.get()) {
                 toggleFlash();

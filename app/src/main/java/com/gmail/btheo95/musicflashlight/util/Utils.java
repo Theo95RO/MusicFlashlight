@@ -17,6 +17,7 @@ public class Utils {
     public static boolean isMyServiceRunning(Class<?> serviceClass, Context context) {
         Log.d(TAG, "isMyServiceRunning()");
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        // TODO: Update for Android O
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 Log.d(TAG, "isMyServiceRunning() -> true");

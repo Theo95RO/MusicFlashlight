@@ -37,9 +37,9 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.gmail.btheo95.musicflashlight.R;
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachableException;
 import com.gmail.btheo95.musicflashlight.fragment.AboutFragment;
 import com.gmail.btheo95.musicflashlight.fragment.LicenseDialogFragment;
 import com.gmail.btheo95.musicflashlight.fragment.MainContentFragment;
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     private void initialiseViews() {
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         });
         changeFabIcon();
 
-        mAdView = (AdView) findViewById(R.id.ad_view);
+        mAdView = findViewById(R.id.ad_view);
         mAdRequest = new AdRequest.Builder()
                 .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
                 .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
@@ -243,11 +243,11 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 Strobe.getInstance().start();
             } catch (IOException e) {
                 handleCameraException();
-            } catch (FlashNotReachebleException e) {
+            } catch (FlashNotReachableException e) {
                 handleNoFlashException();
-            } catch (CameraNotReachebleException e) {
+            } catch (CameraNotReachableException e) {
                 handleNoCameraException();
-            } catch (MicNotReachebleException e) {
+            } catch (MicNotReachableException e) {
                 handleNoMicException();
             }
         }
@@ -526,6 +526,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     private void vibrateFab() {
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        //TODO: Call appropriate API for Android O
         vibrator.vibrate(25);
     }
 

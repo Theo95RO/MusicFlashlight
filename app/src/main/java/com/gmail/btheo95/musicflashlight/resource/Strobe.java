@@ -1,9 +1,9 @@
 package com.gmail.btheo95.musicflashlight.resource;
 
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
-import com.gmail.btheo95.musicflashlight.exception.MicNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
+import com.gmail.btheo95.musicflashlight.exception.MicNotReachableException;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public final class Strobe {
         return strobe;
     }
 
-    public synchronized void start() throws IOException, CameraNotReachebleException, FlashNotReachebleException, MicNotReachebleException {
+    public synchronized void start() throws IOException, CameraNotReachableException, FlashNotReachableException, MicNotReachableException {
         if (mIsStarted) {
             return;
         }
@@ -44,7 +44,7 @@ public final class Strobe {
         mIsStarted = false;
     }
 
-    private void startSoundMeter() throws IOException, MicNotReachebleException {
+    private void startSoundMeter() throws IOException, MicNotReachableException {
         mSoundMeter = new SoundMeter();
         mSoundMeter.start();
     }
@@ -56,7 +56,7 @@ public final class Strobe {
         mSoundMeter.stop();
     }
 
-    private void startCamera() throws IOException, CameraNotReachebleException, FlashNotReachebleException {
+    private void startCamera() throws IOException, CameraNotReachableException, FlashNotReachableException {
         mCamera = new FlashCamera();
         mCamera.startCamera();
     }

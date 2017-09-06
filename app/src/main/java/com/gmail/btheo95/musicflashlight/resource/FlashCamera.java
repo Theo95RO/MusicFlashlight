@@ -3,9 +3,9 @@ package com.gmail.btheo95.musicflashlight.resource;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 
-import com.gmail.btheo95.musicflashlight.exception.CameraNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.CameraNotReachableException;
 import com.gmail.btheo95.musicflashlight.exception.FlashAlreadyInUseException;
-import com.gmail.btheo95.musicflashlight.exception.FlashNotReachebleException;
+import com.gmail.btheo95.musicflashlight.exception.FlashNotReachableException;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,14 +29,14 @@ public class FlashCamera {
     public FlashCamera() {
     }
 
-    public void startCamera() throws IOException, CameraNotReachebleException, FlashNotReachebleException {
+    public void startCamera() throws IOException, CameraNotReachableException, FlashNotReachableException {
         try {
             mCamera = Camera.open();
         } catch (RuntimeException ex) {
-            throw new CameraNotReachebleException();
+            throw new CameraNotReachableException();
         }
         if (mCamera == null) {
-            throw new CameraNotReachebleException();
+            throw new CameraNotReachableException();
         }
         mDummySurfaceTexture = new SurfaceTexture(0);
         mCamera.setPreviewTexture(mDummySurfaceTexture);
@@ -44,20 +44,20 @@ public class FlashCamera {
         try {
             mCamera.startPreview();
         } catch (RuntimeException ex) {
-            throw new CameraNotReachebleException();
+            throw new CameraNotReachableException();
         }
 
         try {
             mParametersFlashOn = mCamera.getParameters();
         } catch (RuntimeException ex) {
             mCamera.stopPreview();
-            throw new FlashNotReachebleException();
+            throw new FlashNotReachableException();
         }
 
         //depends on device
         List<String> flashModesList = mCamera.getParameters().getSupportedFlashModes();
         if (flashModesList == null) {
-            throw new FlashNotReachebleException();
+            throw new FlashNotReachableException();
         }
         if (flashModesList.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
             mParametersFlashOn.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
