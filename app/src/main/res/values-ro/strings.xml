@@ -31,6 +31,7 @@
     <!--Strings related to notifications-->
     <string name="notification_flash_title">Lanterna este pornită</string>
     <string name="notification_flash_content">Atingeți pentru a deschide aplicația</string>
+    <string name="notification_channel_flash_on_text">Notificare când lanterna este pornită</string>
 
     <!--Strings related to main fragment-->
     <string name="fragment_main_mode">Mod</string>

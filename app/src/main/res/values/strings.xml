@@ -30,6 +30,7 @@
     <!--Strings related to notifications-->
     <string name="notification_flash_title">Flashlight is on</string>
     <string name="notification_flash_content">Tap to open the app</string>
+    <string name="notification_channel_flash_on_text">Flash is on notification</string>
 
     <!--Strings related to main fragment-->
     <string name="fragment_main_mode">Mode</string>
