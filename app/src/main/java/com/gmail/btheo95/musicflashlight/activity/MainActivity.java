@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -46,8 +47,10 @@ import com.gmail.btheo95.musicflashlight.fragment.MainContentFragment;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 import com.gmail.btheo95.musicflashlight.service.FlashlightIntentService;
 import com.gmail.btheo95.musicflashlight.util.Constants;
+import com.gmail.btheo95.musicflashlight.util.NotificationHelper;
 import com.gmail.btheo95.musicflashlight.util.Permissions;
 import com.gmail.btheo95.musicflashlight.util.Utils;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         mAdView = findViewById(R.id.ad_view);
         mAdRequest = new AdRequest.Builder()
-                .addTestDevice("09CF6E3DB88CBC82AB6FDE98BE527965") // mine
+                .addTestDevice("4F9B4F499BF52F5B6ED96C3644CC2952") // mine
                 .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
                 .addTestDevice("B0E733267B278B1A17AFEF83AD4D0984") // man
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -525,9 +528,13 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     private void vibrateFab() {
+        int vibrationTime = 25;
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        //TODO: Call appropriate API for Android O
-        vibrator.vibrate(25);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            vibrator.vibrate(vibrationTime);
+        } else {
+            vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, VibrationEffect.DEFAULT_AMPLITUDE));
+        }
     }
 
     private void showPermissionsRationale() {
