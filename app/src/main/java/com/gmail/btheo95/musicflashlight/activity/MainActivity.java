@@ -83,7 +83,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private Intent mFlashlightServiceIntent;
     private boolean mFlashServiceIsBound = false;
     private boolean mFlashIsOn = false;
+    private boolean mIsServiceStarting = false;
 
+    // not sure if AtomicBoolean mandatory
     private AtomicBoolean mIsActivityInFront = new AtomicBoolean(false);
     private int mCurrentFragmentId = -1;
     private MainContentFragment mMainContentFragment;
@@ -185,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                         mFlashlightService.startForeground();
                     }
                 }
+                mIsServiceStarting = false;
             }
 
             @Override
@@ -312,12 +315,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onResume() {
-//        fabAction(true);
-//        Intent startMain = new Intent(Intent.ACTION_MAIN);
-//        startMain.addCategory(Intent.CATEGORY_HOME);
-//        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(startMain);
-
         Log.d(TAG, "onResume()");
         mIsActivityInFront.set(true);
 
@@ -481,6 +478,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     private void fabAction(boolean shouldVibrate) {
+        if (mIsServiceStarting) {
+            return;
+        }
         if (!Permissions.arePermissionsGranted(MainActivity.this)) {
             if (Permissions.shouldShowRequestPermissionsRationale(MainActivity.this)) {
                 showPermissionsRationale();
@@ -512,6 +512,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     }
 
     private void startFlashlight() {
+        mIsServiceStarting = true;
         int checkedRadioId = getCheckedModeRadioId();
         mFlashlightServiceIntent = getIntentForService(checkedRadioId);
         FlashlightIntentService.bindAndStartService(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
@@ -552,7 +553,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private void vibrateFab() {
         int vibrationTime = 25;
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        
+
         if (vibrator != null) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 vibrator.vibrate(vibrationTime);
