@@ -46,7 +46,7 @@ public class AboutFragment extends Fragment {
         return new AboutPage(mContext)
                 .isRTL(false) // right to left
                 .setDescription(getString(R.string.fragment_about_description, getString(R.string.app_name)))
-                .setImage(R.mipmap.ic_launcher_teal)
+                .setImage(R.mipmap.ic_launcher_round)
                 .addItem(new Element().setTitle(getString(R.string.fragment_about_version, getString(R.string.version_number))))
                 .addGroup(getString(R.string.fragment_about_connect_with_us_section))
                 .addEmail(getString(R.string.email_feedback))
