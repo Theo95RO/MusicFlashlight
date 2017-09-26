@@ -552,11 +552,15 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private void vibrateFab() {
         int vibrationTime = 25;
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            vibrator.vibrate(vibrationTime);
-        } else {
-            vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, VibrationEffect.DEFAULT_AMPLITUDE));
+        
+        if (vibrator != null) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                vibrator.vibrate(vibrationTime);
+            } else {
+                vibrator.vibrate(VibrationEffect.createOneShot(vibrationTime, VibrationEffect.DEFAULT_AMPLITUDE));
+            }
         }
+
     }
 
     private void showPermissionsRationale() {
