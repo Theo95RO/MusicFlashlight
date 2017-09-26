@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "12218139377",
+    "firebase_url": "https://music-flashlight.firebaseio.com",
+    "project_id": "music-flashlight",
+    "storage_bucket": "music-flashlight.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12218139377:android:b5503445400d3473",
+        "android_client_info": {
+          "package_name": "com.gmail.btheo95.musicflashlight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12218139377-vb52ni5j155gso32ji1l7fuc6d7l3i6f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gmail.btheo95.musicflashlight",
+            "certificate_hash": "f6a9b9dae18bc73fbdbf80f907c96ac3426e09f4"
+          }
+        },
+        {
+          "client_id": "12218139377-mtl9cad252r11m0dqp5fi5u2hn6g7sb1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gmail.btheo95.musicflashlight",
+            "certificate_hash": "a42cf53b0352920fa3191f5c4b5f246a14c7413e"
+          }
+        },
+        {
+          "client_id": "12218139377-ehapeqb1bve10lg20hq0baqpg8jba4hl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3syczvzNmm5OOX8e5beKbpFUEH3WvdaE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
