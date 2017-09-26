@@ -34,6 +34,7 @@ public class FlashlightIntentService extends IntentService {
 
     private static final String TAG = FlashlightIntentService.class.getSimpleName();
     private static final int NOTIFICATION_ID = 1337;
+    public static boolean isServiceRunning = false;
 
     public static final String ACTION_MANUAL_MUSIC_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.MANUAL_MUSIC";
     public static final String ACTION_AUTO_MUSIC_FLASHLIGHT = "com.gmail.btheo95.musicflashlight.service.action.AUTO_MUSIC";
@@ -59,6 +60,12 @@ public class FlashlightIntentService extends IntentService {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        isServiceRunning = true;
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent == null) {
             return;
@@ -74,25 +81,11 @@ public class FlashlightIntentService extends IntentService {
         Log.d(TAG, "onDestroy()");
         stopForeground(true);
         super.onDestroy();
+        isServiceRunning = false;
     }
 
     private Notification buildForegroundNotification() {
         NotificationHelper nh = new NotificationHelper(this);
-//        nh.notify(NOTIF_BACKGROUD, nh.getNotification());
-//
-//        Intent intent = new Intent(this, MainActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        // TODO: Update for Android O
-//        return new NotificationCompat.Builder(this,"9")
-//                .setContentTitle(getString(R.string.notification_flash_title))
-//                .setContentText(getString(R.string.notification_flash_content))
-//                .setSmallIcon(R.drawable.ic_filled_light_bulb_white_24dp)
-//                .setOngoing(true)
-//                .setColor(ContextCompat.getColor(this, R.color.primary))
-//                .setContentIntent(pendingIntent)
-//                .build();
-
         return nh.getNotification().build();
     }
 
