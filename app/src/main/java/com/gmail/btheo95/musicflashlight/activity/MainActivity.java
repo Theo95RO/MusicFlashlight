@@ -47,15 +47,14 @@ import com.gmail.btheo95.musicflashlight.fragment.MainContentFragment;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 import com.gmail.btheo95.musicflashlight.service.FlashlightIntentService;
 import com.gmail.btheo95.musicflashlight.util.Constants;
-import com.gmail.btheo95.musicflashlight.util.NotificationHelper;
 import com.gmail.btheo95.musicflashlight.util.Permissions;
 import com.gmail.btheo95.musicflashlight.util.Utils;
-
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
@@ -83,8 +82,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
     private ServiceConnection mServiceConnection;
     private Intent mFlashlightServiceIntent;
     private boolean mFlashServiceIsBound = false;
-
     private boolean mFlashIsOn = false;
+
+    private AtomicBoolean mIsActivityInFront = new AtomicBoolean(false);
     private int mCurrentFragmentId = -1;
     private MainContentFragment mMainContentFragment;
 
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         initialiseBroadcastReceiver();
         initialiseServiceConnection();
         initialiseViews();
-        startResources();
+//        startResources();
 
         mMainContentFragment = (MainContentFragment)
                 getFragmentManager().findFragmentById(R.id.main_fragment);
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void initialiseRecentView() {
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_teal);
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
         ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(this, R.color.primary_dark));
         setTaskDescription(taskDesc);
 
@@ -174,6 +174,17 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 FlashlightIntentService.LocalBinder binder = (FlashlightIntentService.LocalBinder) service;
                 mFlashlightService = binder.getService();
                 mFlashServiceIsBound = true;
+
+                if (mFlashIsOn) {
+
+                    // Stops notification after activity restores state and reconnects to service if it was disconnected
+                    if (mIsActivityInFront.get()) {
+                        mFlashlightService.stopForeground();
+                        // Starts notification if activity was paused when service connects
+                    } else {
+                        mFlashlightService.startForeground();
+                    }
+                }
             }
 
             @Override
@@ -288,9 +299,10 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         //or in on resume
         if (mFlashIsOn) {
             //checks if the notification should disappear when flashlight is on at startup
-            if (mFlashServiceIsBound) {
-                mFlashlightService.stopForeground();
-            }
+//            if (mFlashServiceIsBound) {
+//                mFlashlightService.stopForeground();
+//                Log.d(TAG, "ALOGA2");
+//            }
             //checks if the screen should be prevented from sleeping
             if (!shouldRunInBackground()) {
                 Utils.preventScreenSleeping(this);
@@ -300,8 +312,14 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onResume() {
-        super.onResume();
+//        fabAction(true);
+//        Intent startMain = new Intent(Intent.ACTION_MAIN);
+//        startMain.addCategory(Intent.CATEGORY_HOME);
+//        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(startMain);
+
         Log.d(TAG, "onResume()");
+        mIsActivityInFront.set(true);
 
         if (mAdView != null) {
             mAdView.resume();
@@ -312,13 +330,14 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             if (mFlashServiceIsBound) {
                 mFlashlightService.stopForeground();
             }
-
 //            //checks if the screen should be prevented from sleeping
 //            if (!shouldRunInBackground()) {
 //                Log.d(TAG, "here");
 //                Utils.preventScreenSleeping(this);
 //            }
         }
+        super.onResume();
+
     }
 
     @Override
@@ -329,6 +348,9 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause()");
+        mIsActivityInFront.set(false);
+
         if (mAdView != null) {
             mAdView.pause();
         }
