@@ -20,6 +20,8 @@ import android.widget.TableLayout;
 
 import com.gmail.btheo95.musicflashlight.R;
 import com.gmail.btheo95.musicflashlight.util.Constants;
+import com.gmail.btheo95.musicflashlight.util.FlashMode;
+import com.gmail.btheo95.musicflashlight.util.MusicModes;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -130,11 +132,9 @@ public class MainContentFragment extends Fragment {
 
     public void checkDefaultFlashModeRadioBtn() {
         int flashModeRadioButtonPreference = mSharedPreferences.getInt(Constants.PREFERENCE_FLASH_MODE_KEY, Constants.PREFERENCE_FLASH_MODE_DEFAULT);
-        if (flashModeRadioButtonPreference != R.id.radio_mode_musical
-                && flashModeRadioButtonPreference != R.id.radio_mode_strobe
-                && flashModeRadioButtonPreference != R.id.radio_mode_torch) {
-            flashModeRadioButtonPreference = Constants.PREFERENCE_FLASH_MODE_DEFAULT;
-        }
+
+        flashModeRadioButtonPreference = FlashMode.getCheckedRadioByFlashMode(flashModeRadioButtonPreference);
+
         mModeRadioGroup.check(flashModeRadioButtonPreference);
         handleFlashModeRadioButtonChange(flashModeRadioButtonPreference, false);
     }
@@ -146,7 +146,7 @@ public class MainContentFragment extends Fragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 mSharedPreferences.edit()
-                        .putInt(Constants.PREFERENCE_FLASH_MODE_KEY, checkedId)
+                        .putInt(Constants.PREFERENCE_FLASH_MODE_KEY, FlashMode.getFlashModeByCheckedRadio(checkedId))
                         .apply();
 
                 handleFlashModeRadioButtonChange(checkedId);
@@ -159,10 +159,9 @@ public class MainContentFragment extends Fragment {
     public void checkDefaultMusicSensRadioBtn() {
         int musicalSensibilityRadioButtonPreference = mSharedPreferences.getInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY,
                 Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_DEFAULT);
-        if (musicalSensibilityRadioButtonPreference != R.id.radio_musical_sensibility_auto
-                && musicalSensibilityRadioButtonPreference != R.id.radio_musical_sensibility_manual) {
-            musicalSensibilityRadioButtonPreference = Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_DEFAULT;
-        }
+
+        musicalSensibilityRadioButtonPreference = MusicModes.getCheckedRadioBMusicMode(musicalSensibilityRadioButtonPreference);
+
         mMusicModeRadioGroup.check(musicalSensibilityRadioButtonPreference);
         handleMusicalModeRadioButtonChange(musicalSensibilityRadioButtonPreference, false);
     }
@@ -174,7 +173,7 @@ public class MainContentFragment extends Fragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 mSharedPreferences.edit()
-                        .putInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY, checkedId)
+                        .putInt(Constants.PREFERENCE_MUSICAL_SENSIBILITY_MODE_KEY, MusicModes.getMusicModeByCheckedRadio(checkedId))
                         .apply();
 
                 handleMusicalModeRadioButtonChange(checkedId);
