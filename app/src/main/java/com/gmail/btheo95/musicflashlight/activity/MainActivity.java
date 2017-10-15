@@ -47,18 +47,20 @@ import com.gmail.btheo95.musicflashlight.fragment.MainContentFragment;
 import com.gmail.btheo95.musicflashlight.resource.Strobe;
 import com.gmail.btheo95.musicflashlight.service.FlashlightIntentService;
 import com.gmail.btheo95.musicflashlight.util.Constants;
+import com.gmail.btheo95.musicflashlight.util.FireBaseLogs;
 import com.gmail.btheo95.musicflashlight.util.Permissions;
 import com.gmail.btheo95.musicflashlight.util.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener {
 
-    //    private FirebaseAnalytics mFirebaseAnalytics;
+    private FirebaseAnalytics mFirebaseAnalytics;
     private static final String TAG = MainActivity.class.getName();
 
     private static final int PERMISSIONS_REQUEST_CODE = 0;
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             initialiseRecentView();
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             }
         });
 
-        loadAd();
+//        loadAd();
     }
 
     private void initialiseServiceConnection() {
@@ -419,13 +421,16 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        FireBaseLogs.menuClick(mFirebaseAnalytics);
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_main_about:
                 displayAboutFragment();
+                FireBaseLogs.aboutClick(mFirebaseAnalytics);
                 return true;
             case R.id.menu_main_licenses:
                 displayLicensesDialogFragment();
+                FireBaseLogs.licenseClick(mFirebaseAnalytics);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -516,6 +521,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         int checkedRadioId = getCheckedModeRadioId();
         mFlashlightServiceIntent = getIntentForService(checkedRadioId);
         FlashlightIntentService.bindAndStartService(getApplicationContext(), mServiceConnection, mFlashlightServiceIntent);
+        FireBaseLogs.flashUsed(mFirebaseAnalytics, checkedRadioId);
     }
 
     private void stopFlashlight() {
@@ -607,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         }
         setFragment(R.id.overlay_fragment_container, aboutFragment, R.animator.fade_in_start, R.animator.fade_out_start);
         mFab.hide();
-        destroyAd();
+//        destroyAd();
     }
 
     private void setFragment(int containerViewId, Fragment fragment, Integer idOfInAnimation, Integer idOfOutAnimation) {
@@ -718,6 +724,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             return;
         }
 
+        FireBaseLogs.flashUsed(mFirebaseAnalytics, checkedId);
         mFlashlightServiceIntent = getIntentForService(checkedId);
         mFlashlightService.changeAction(mFlashlightServiceIntent);
     }
