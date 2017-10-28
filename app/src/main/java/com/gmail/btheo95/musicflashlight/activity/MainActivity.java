@@ -135,8 +135,6 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
         mAdView = findViewById(R.id.ad_view);
         mAdRequest = new AdRequest.Builder()
                 .addTestDevice("4F9B4F499BF52F5B6ED96C3644CC2952") // mine
-                .addTestDevice("CD6899493C29DB07F6BAA044F3576813") // htc
-                .addTestDevice("B0E733267B278B1A17AFEF83AD4D0984") // man
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
 
@@ -164,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             }
         });
 
-//        loadAd();
+        loadAd();
     }
 
     private void initialiseServiceConnection() {
@@ -443,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
             removeFragment(R.id.overlay_fragment_container, R.animator.fade_in_stop, R.animator.fade_out_stop);
             mCurrentFragmentId = -1;
             mFab.show();
-            loadAd();
+//            loadAd();
         } else {
             super.onBackPressed();
         }
