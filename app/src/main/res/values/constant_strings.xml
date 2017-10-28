@@ -2,7 +2,7 @@
 <resources>
 
     <!--suppress MissingTranslation -->
-    <string name="version_number" translatable="false">2.1</string>
+    <string name="version_number" translatable="false">2.1.1</string>
     <!--suppress MissingTranslation -->
     <string name="email_feedback" translatable="false">musicflashlightfeedback@gmail.com</string>
     <!--suppress MissingTranslation -->
