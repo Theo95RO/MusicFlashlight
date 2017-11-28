@@ -18,27 +18,37 @@ public class FireBaseLogs {
     public static void flashUsed(FirebaseAnalytics firebaseAnalytics, int radioChecked) {
         Bundle params = new Bundle();
         int flashMode = FlashMode.getFlashModeByCheckedRadio(radioChecked);
-        String modeText;
         switch (flashMode) {
             case FlashMode.TORCH:
-                modeText = "torch";
+                firebaseAnalytics.logEvent("flash_torch_used", params);
                 break;
             case FlashMode.MUSIC:
-                modeText = "musical";
+                firebaseAnalytics.logEvent("flash_musical_used", params);
                 break;
             case FlashMode.STROBE:
-                modeText = "strobe";
+                firebaseAnalytics.logEvent("flash_strobe_used", params);
                 break;
             default:
-                modeText = "bug";
+                firebaseAnalytics.logEvent("bug_flash_mode", params);
         }
-        params.putString("mode", modeText);
         firebaseAnalytics.logEvent("flash_used", params);
     }
 
     public static void aboutClick(FirebaseAnalytics firebaseAnalytics) {
         Bundle params = new Bundle();
         firebaseAnalytics.logEvent("about_click", params);
+    }
+
+    public static void menuLicenseClick(FirebaseAnalytics firebaseAnalytics) {
+        licenseClick(firebaseAnalytics);
+        Bundle params = new Bundle();
+        firebaseAnalytics.logEvent("menu_license_click", params);
+    }
+
+    public static void aboutLicenseClick(FirebaseAnalytics firebaseAnalytics) {
+        licenseClick(firebaseAnalytics);
+        Bundle params = new Bundle();
+        firebaseAnalytics.logEvent("about_license_click", params);
     }
 
     public static void licenseClick(FirebaseAnalytics firebaseAnalytics) {

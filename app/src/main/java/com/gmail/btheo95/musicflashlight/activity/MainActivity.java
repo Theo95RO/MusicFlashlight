@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 return true;
             case R.id.menu_main_licenses:
                 displayLicensesDialogFragment();
-                FireBaseLogs.licenseClick(mFirebaseAnalytics);
+                FireBaseLogs.menuLicenseClick(mFirebaseAnalytics);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
